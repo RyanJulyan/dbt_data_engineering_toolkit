@@ -1,9 +1,9 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "*.*.*"
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -12,15 +12,42 @@ env:
   DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ github.event.workflow_run.head_sha }}
   cancel-in-progress: false
 
 jobs:
-  validate:
+  detect-tag:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      release_tag: ${{ steps.tag.outputs.release_tag }}
+      release_ready: ${{ steps.tag.outputs.release_ready }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+      - id: tag
+        name: Require semver tag on tested commit
+        run: |
+          tag="$(git tag --points-at HEAD | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
+          echo "release_tag=${tag}" >> "$GITHUB_OUTPUT"
+          if [[ -n "${tag}" ]]; then
+            echo "release_ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "release_ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-python:
+    needs: detect-tag
+    if: needs.detect-tag.outputs.release_ready == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
@@ -28,53 +55,16 @@ jobs:
           cache: pip
       - name: Install validation dependencies
         run: python -m pip install -e "./python[test]"
-      - name: Verify tag, quality gates, and release proof
-        run: |
-          python scripts/release.py verify-tag "${GITHUB_REF_NAME}"
-          python scripts/static_check.py
-          python scripts/generate_alias_facade.py --check
-          make quality
-          make python-coverage
-          make deps parse dbt-coverage codegen evaluator
-          det prove \
-            python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx \
-            --project-dir examples/compiler/customer_accounts \
-            --local-package-root .
-
-  warehouse-integration:
-    uses: ./.github/workflows/cloud-integration.yml
-    secrets: inherit
-
-  fusion-duckdb:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-          cache: pip
-      - name: Install dbt Fusion
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install --pre "dbt>=2.0.0rc0,<3.0.0" "PyYAML>=6,<7"
-      - name: Build the integration suite with Fusion and DuckDB
-        working-directory: integration_tests
-        run: bash ../scripts/run_fusion_integration.sh dev
-
-  build-python:
-    needs: [validate, warehouse-integration, fusion-duckdb]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-          cache: pip
+      - name: Verify release tag and version alignment
+        run: python scripts/release.py verify-tag "${{ needs.detect-tag.outputs.release_tag }}"
       - name: Build and inspect wheel and source distribution
+        env:
+          RELEASE_TAG: ${{ needs.detect-tag.outputs.release_tag }}
         run: |
+          release_version="${RELEASE_TAG#v}"
           python -m pip install "build>=1.2,<2"
           python -m build python --outdir dist
-          python scripts/build_source_archive.py --output release/dbt_data_engineering_toolkit-v2.3.0.zip
+          python scripts/build_source_archive.py --output "release/dbt_data_engineering_toolkit-v${release_version}.zip"
       - name: Smoke-test the exact wheel
         run: |
           python -m venv /tmp/det-wheel-smoke
@@ -135,20 +125,37 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-github-release:
-    needs: build-python
+    needs: [detect-tag, build-python]
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    if: needs.detect-tag.outputs.release_ready == 'true'
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           name: python-distributions
           path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-release
+          path: release
       - name: Create immutable GitHub release for dbt Package Hub
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.detect-tag.outputs.release_tag }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" dist/* release/* \
-            --title "${GITHUB_REF_NAME}" \
-            --notes-file V2.3.0_RELEASE_NOTES.md
+          release_version="${RELEASE_TAG#v}"
+          notes_file="V${release_version}_RELEASE_NOTES.md"
+          if [[ -f "${notes_file}" ]]; then
+            gh release create "${RELEASE_TAG}" dist/* release/* \
+              --title "${RELEASE_TAG}" \
+              --notes-file "${notes_file}"
+          else
+            gh release create "${RELEASE_TAG}" dist/* release/* \
+              --title "${RELEASE_TAG}" \
+              --generate-notes
+          fi
