@@ -1,12 +1,23 @@
 # dbt_data_engineering_toolkit
 
-**From shared data-product definition to production dbt.**
+**A shared path from business requirements and source-to-target mappings to validated, readable and testable dbt data products.**
 
-Bridge the gap between business requirements and production dbt with shared data-product definitions, source-to-target mappings, validation, reusable engineering macros, and deterministic dbt generation. With an ODCS Excel-template superset Data Contract first approach that compiles to an inline-first dbt package for routine data-engineering work
+The goal is simple:
 
-`dbt_data_engineering_toolkit` helps **BAs, analysts and data engineers work from the same data-product specification**, validate engineering intent before implementation, and turn that specification into **consistent, readable and testable dbt**.
+> **Align BAs, analysts and data engineers around the same data-product specification, validate the engineering intent early, and turn it into consistent, readable and testable dbt.**
 
-Instead of allowing requirements, source-to-target mappings, transformation logic, data contracts and implementation decisions to drift across spreadsheets, tickets, documentation and code, the toolkit creates one structured path:
+Today, the path from a business requirement to a production dbt data product is often fragmented across:
+
+* requirements and tickets
+* source-to-target mapping spreadsheets
+* data contracts
+* transformation specifications
+* quality rules
+* documentation
+* dbt models and tests
+* engineer- or team-specific implementation patterns
+
+`dbt_data_engineering_toolkit` closes that gap by providing a structured path from:
 
 ```text
 Business Requirements
@@ -15,7 +26,9 @@ Shared Data Product Definition
         ↓
 Source-to-Target Mapping
         ↓
-Transformations + Quality Rules
+Transformations + Business Rules
+        ↓
+Data Quality + Operational Behaviour
         ↓
 Validate Early
         ↓
@@ -24,52 +37,38 @@ Generate dbt
 dbt build / test / prove
 ```
 
-> **The specification becomes the collaboration point.**
->
-> BAs and analysts can help define **what the data product should do**, while data engineers retain control over **how it is implemented**.
+The important part is that **the data-product specification becomes the collaboration point**.
 
-The generated result is still ordinary, readable dbt. There is no proprietary runtime and no requirement to understand the workbook or compiler to understand the resulting project.
+BAs and analysts can help define **what the data product should do**, while data engineers retain control over **how it is implemented**.
 
----
+Because the specification drives generation, the contract, documentation and implementation can remain aligned instead of slowly drifting apart.
 
-## Why this exists
+And the result is still **ordinary dbt**.
 
-The path from a business requirement to a production dbt data product often becomes fragmented across:
+No proprietary runtime.
 
-* requirements and tickets
-* source-to-target mapping spreadsheets
-* data contracts
-* transformation specifications
-* validation rules
-* dbt models and tests
-* engineer- or team-specific implementation patterns
+No hidden transformation engine.
 
-The individual artefacts may all be reasonable, but keeping them aligned becomes increasingly difficult.
+No model-level configuration dictionary that has to be decoded before someone can understand the SQL.
 
-The same common engineering tasks also tend to be implemented slightly differently from project to project:
-
-* How do we clean a string?
-* How do we standardise a country?
-* How do we validate an email?
-* How do we map business values?
-* What happens to an invalid row?
-* How do we express source-to-target intent?
-* How do we prove the implementation still matches the contract?
-
-`dbt_data_engineering_toolkit` addresses both problems:
-
-1. **Create a shared definition of the data product before implementation.**
-2. **Provide a standard engineering vocabulary for implementing it.**
+Generated models remain readable, reviewable and testable dbt projects.
 
 ---
 
-# Two complementary toolkits
+# What is in this repository?
 
-The repository contains two closely related components.
+The toolkit contains two complementary components:
 
-## 🧱 Reusable dbt package
+1. 🧱 **A reusable dbt package** providing a standard engineering vocabulary for common data-engineering work.
+2. 🐍 **A Python compiler and CLI** for defining, validating, generating and proving complete dbt data products from controlled Excel or ODCS specifications.
 
-The dbt package provides an **inline-first engineering vocabulary** for routine data-engineering work:
+They can be used together, but the dbt package can also be used independently.
+
+---
+
+# 🧱 Reusable dbt package
+
+The dbt package provides an inline-first API for routine data-engineering work:
 
 ```text
 clean
@@ -84,23 +83,9 @@ clean
   → evaluate
 ```
 
-Common operations are expressed as normal SQL-expression macros and remain beside the fields they affect.
+The aim is to provide a **consistent engineering vocabulary** for work that otherwise tends to be implemented slightly differently across projects and engineers.
 
 For example:
-
-```sql
-select
-    {{ de_toolkit.clean_string('customer_name') }} as customer_name,
-    {{ de_toolkit.clean_email('email') }} as email,
-    {{ de_toolkit.clean_numeric(
-        'revenue',
-        precision=18,
-        scale=2
-    ) }} as revenue
-from {{ source('raw', 'customers') }}
-```
-
-Common macros include:
 
 ```text
 clean_string()
@@ -122,130 +107,266 @@ is_positive()
 ...
 ```
 
+Each macro behaves as a SQL-expression function, keeping transformation logic beside the column it affects.
+
+```sql
+select
+    {{ dbt_data_engineering_toolkit.clean_string('customer_name') }} as customer_name,
+    {{ de_toolkit.clean_email('email') }} as email,
+    {{ dbt_data_engineering_toolkit.clean_numeric(
+        'revenue',
+        precision=18,
+        scale=2
+    ) }} as revenue,
+    {{ dbt_data_engineering_toolkit.is_email('email') }} as _email_valid
+from {{ source('raw', 'customers') }}
+```
+
 The API is deliberately **SQL-first**.
 
-There is no model-level transformation dictionary to decode. A generated or handwritten model should remain readable from top to bottom as normal dbt.
+A developer should be able to read a model from top to bottom without first finding and decoding a separate transformation configuration.
 
-### Two supported namespaces
+The package delegates established primitives to existing dbt ecosystem packages where appropriate:
 
-The canonical package namespace is:
+* `dbt_utils` for established utility primitives
+* `dbt_assertions` for row-level assertions
+* `codegen` for scaffolding
+* `dbt_project_evaluator` for project-quality analysis
 
-```jinja
-dbt_data_engineering_toolkit.clean_string(...)
-```
-
-A shorter companion namespace is also available:
-
-```jinja
-de_toolkit.clean_string(...)
-```
-
-The `de_toolkit` package is only a thin facade over the canonical implementation, so the two APIs cannot develop separate behaviour.
-
-The package also delegates established primitives to existing dbt ecosystem packages where appropriate, including:
-
-* `dbt_utils`
-* `dbt_assertions`
-* `codegen`
-* `dbt_project_evaluator`
-
-Those implementation details do not need to leak into normal transformation models.
+Those implementation namespaces do not need to appear in normal transformation models.
 
 ---
 
-## 🐍 Data-product compiler and CLI
+# 🐍 Data-product compiler and CLI
 
-The Python package provides the `det` command-line interface.
+The Python package provides the `det` CLI and a controlled data-product compiler.
 
-It gives teams a controlled way to define a data product using:
+It allows a team to define a data product through a protected Excel workbook or existing ODCS structure using **business-friendly names for common dbt and data-engineering tasks**.
 
-* the DET Excel workbook
-* ODCS contracts
-* standard ODCS Excel
-* SQL DDL
-* dbt manifests
+The workbook captures information such as:
 
-The controlled workbook uses **business-friendly names for common dbt and data-engineering concepts**, while retaining enough structure for deterministic compilation.
-
-It captures:
-
+* product identity and ownership
 * target schemas and fields
 * upstream sources and their schemas
 * source-to-target mappings
-* ordered transformation steps
+* ordered transformations and cleaning rules
+* model inputs
 * joins
 * expected join cardinality
 * lookups
 * model grain
-* materialisation
+* materialization
 * contract enforcement
 * data-quality requirements
 * operational validation
 * warn / reject / quarantine / fail behaviour
-* ownership
-* support
-* SLA and other contract metadata
+* SLA information
+* support information
+* server information
+* pricing and other ODCS metadata
 
-The compiler then validates those decisions before generating:
+The compiler validates that specification and emits:
 
-* canonical ODCS 3.1 contracts
-* DET execution metadata
+* canonical ODCS 3.1 YAML
+* typed DET execution metadata
 * dbt sources
 * dbt models
-* model contracts
-* tests
+* model YAML
+* dbt contracts
+* synchronized tests
 * quarantine models
 * project configuration
+* SQLFluff configuration
 * proof infrastructure
+* generation manifests
 
-The generated project remains a normal dbt project.
+The generated SQL is deliberately understandable **without the workbook or compiler**.
 
 ---
 
 # The collaboration model
 
-This is the most important part of the toolkit.
+The workbook is not intended to replace engineering with Excel.
 
-The workbook is **not intended to turn analysts into dbt developers**, and the compiler is **not intended to replace data engineers**.
+It exists to create a clearer collaboration boundary.
 
-Instead, it creates a more useful boundary between roles.
+## BAs and analysts can help define
 
-### BAs and analysts can contribute to
-
+* what the product represents
+* target fields
 * business definitions
-* output fields
-* source-to-target mappings
+* source-to-target relationships
 * transformation intent
+* mapping decisions
 * lookup values
 * quality expectations
-* ownership and support metadata
+* ownership
+* support expectations
+* SLA and contract metadata
 
-### Data engineers retain control over
+## Data engineers retain control over
 
 * source structures
-* data types
 * model architecture
+* model inputs
+* grains
 * joins
-* grain
 * cardinality
+* physical types
 * transformation implementation
 * operational validation
-* materialisation
-* generated code
-* dbt execution
-* deployment and review
+* materialization
+* dbt contracts
+* generated SQL
+* deployment
+* execution
+* proof
 
-The result is a specification that both groups can understand without forcing either group to work entirely in the other's abstraction.
-
-And because the specification generates the implementation, **documentation and code can be kept aligned rather than maintained independently**.
+The specification therefore becomes a shared representation of the product without pretending that every participant needs to understand Jinja, warehouse SQL or dbt internals.
 
 ---
 
-# Quick start
+# Contract **what** vs implementation **how**
 
-## 1. Install the compiler
+A key design principle is the separation between:
 
-Requires Python 3.11+.
+> **What does this data product promise?**
+
+and:
+
+> **How will dbt implement that promise?**
+
+ODCS remains authoritative for the data contract.
+
+DET adds the execution metadata needed to turn those promises into a deterministic implementation.
+
+The workbook therefore separates official ODCS surfaces from DET implementation surfaces.
+
+| Workbook tabs                                                                                                                              | Responsibility                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `Fundamentals`, `Schema <model>`, `Relationships`, `Quality`, `SLA`, `Servers`, `Team`, `Roles`, `Support`, `Pricing`, `Custom Properties` | Official ODCS identity, ownership, schema and service promises                               |
+| `DET Models`, `DET Model Inputs`                                                                                                           | dbt layers, materializations, grains, contract enforcement and ordered input relations       |
+| `DET Sources`, `DET Source Schema`                                                                                                         | First-class dbt sources and their importable columns, keys and types                         |
+| `DET Mapping`, `DET Parameters`, `DET Lookups`                                                                                             | Compact source-to-target rows, normalized operation parameters and key/value maps            |
+| `Quality`                                                                                                                                  | Authoritative visible ODCS 3.1 contract-quality rules                                        |
+| `DET Relationships`                                                                                                                        | Explicit joins and cardinality review                                                        |
+| `Operational Validation`, `Operational Parameters`                                                                                         | Runtime warning, quarantine and implementation-validation behaviour                          |
+| `DET Build`                                                                                                                                | Adapter, profile, schema, published Git URL environment variable and pinned toolkit revision |
+| `_DET Context`, `_DET Lists`, `_DET Metadata`, `_DET Raw ODCS`                                                                             | Protected compiler context and round-trip state                                              |
+
+---
+
+# Release quality and compatibility
+
+V2.3.0 has explicit release gates for both the Python compiler and dbt package.
+
+| Gate                                      |    V2.3.0 result |
+| ----------------------------------------- | ---------------: |
+| Python statement coverage                 |           85.01% |
+| dbt DuckDB-scoped implementation coverage | 98.53% — 134/136 |
+| dbt public-API direct execution coverage  |   100% — 104/104 |
+
+Both coverage gates fail below 80%.
+
+dbt Core is tested for:
+
+* BigQuery
+* Snowflake
+* DuckDB
+* Databricks
+* Redshift
+* Athena
+* ClickHouse
+* Spark
+
+PostgreSQL is also supported by the compiler adapter configuration.
+
+The package follows dbt's Fusion compatibility guidance and tests Fusion for every requested platform for which Fusion currently provides an adapter.
+
+Athena and ClickHouse are explicitly Core-only.
+
+See:
+
+* [Compatibility](docs/compatibility.md)
+* [Testing](docs/testing.md)
+
+for the exact proof level and credentialed warehouse matrix.
+
+---
+
+# Maintainability architecture
+
+The dbt SQL API and compiler are deliberately separated.
+
+```text
+CLI / future API
+       ↓
+ToolkitApplication
+       ↓
+workbook · import · validation · emission · proof services
+       ↓
+file · workbook · dbt · SQLFluff · Data Contract brokers
+```
+
+External libraries and commands are confined to brokers.
+
+Format-specific parsers produce one typed:
+
+```text
+ImportedDataStructure
+```
+
+Independent validators return stable error codes such as:
+
+```text
+DET-MAP-004
+```
+
+Independent emitters return artifacts without directly writing files.
+
+The `de_toolkit` facade is generated from canonical macro signatures so that the canonical and short namespaces cannot drift independently.
+
+See [Architecture](docs/architecture.md).
+
+---
+
+# Safe, transactional generation
+
+Generation is performed as a single post-synchronization transaction:
+
+```text
+workbook
+    ↓
+typed specification
+    ↓
+staged ODCS / DET / dbt
+    ↓
+Data Contract synchronization
+    ↓
+synchronized validation
+    ↓
+final hashes
+    ↓
+atomic publish
+```
+
+If synchronization, linting or synchronized-output validation fails, the existing project and its `.det-manifest.json` remain byte-for-byte untouched.
+
+A failed generation therefore does not leave a partially updated dbt project behind.
+
+---
+
+# Complete workbook-to-dbt walkthrough
+
+The following is the complete compiler workflow.
+
+Commands assume you are running from the extracted `dbt_data_engineering_toolkit` repository unless stated otherwise.
+
+---
+
+## Step 1 — Install the compiler
+
+Create a virtual environment and install the Python compiler:
 
 ```bash
 python -m venv .venv-compiler
@@ -254,17 +375,51 @@ source .venv-compiler/bin/activate
 python -m pip install -e "./python"
 ```
 
-The compiler installation includes its required dbt, Data Contract and SQLFluff dependencies.
+That installation includes:
+
+* the DET compiler
+* Data Contract CLI
+* dbt Core
+* the DuckDB adapter
+* the tested DuckDB 1.4 runtime
+* SQLFluff
+* SQLFluff's dbt templater
+
+Data Contract and dbt are normal runtime dependencies.
+
+There is no separate optional compiler extra required for the default workflow.
+
+The compiler requires **Python 3.11 or later**.
+
+Excel itself is not required to execute the compiler.
 
 ---
 
-## 2. Create a data-product workbook
+# Step 2 — Create the controlled workbook
+
+Create a new product definition:
 
 ```bash
 det workbook build orders_data_product.xlsx
 ```
 
-For non-interactive use:
+The generated workbook is an **official ODCS Excel-template superset**.
+
+Its standard sheets can be interpreted by Data Contract CLI, while DET-specific sheets describe executable dbt behaviour.
+
+When running interactively, the command asks for:
+
+* Product ID
+* name
+* domain
+* purpose
+* owner
+* whether an initial model row should be created
+* whether Customer 360 demonstration data should be included
+
+Demo data defaults to **No**.
+
+For automation or CI:
 
 ```bash
 det workbook build orders_data_product.xlsx \
@@ -275,22 +430,79 @@ det workbook build orders_data_product.xlsx \
   --owner "Sales Analytics"
 ```
 
-The default workbook is intentionally safe and does not create example sources, mappings, rules or sample data.
+This creates a production-safe workbook with no:
+
+* sources
+* mappings
+* rules
+* lookups
+* sample-data rows
+
+The filename is used only as the default Product ID.
+
+No fixed Customer identity is injected into normal workbooks.
+
+Training data is an explicit opt-in:
+
+```bash
+det workbook build customer_360_demo.xlsx \
+  --no-input \
+  --sample-customer-data
+```
 
 ---
 
-## 3. Or start from an existing structure
+## Workbook safety and metadata
 
-You do not need to re-enter an existing schema manually.
+Do not rename workbook tabs or columns.
 
-### ODCS YAML
+Yellow/dropdown cells are the supported business-facing authoring interface.
+
+Protected sheets use the password:
+
+```text
+det
+```
+
+This protection exists only to prevent accidental edits.
+
+It is **not a security boundary**.
+
+`_DET Lists` and `_DET Metadata` are very hidden.
+
+The same operator registry drives:
+
+* workbook dropdowns
+* compiler validation
+* accepted parameters
+* type flow
+* generated macro names
+* registry versioning
+* registry fingerprinting stored in `_DET Metadata`
+
+This keeps the authoring experience and compiler behaviour aligned.
+
+---
+
+# Step 2A — Start from an existing structure
+
+You do not need to manually recreate an existing schema.
+
+DET can build its workbook from:
+
+* ODCS YAML
+* standard ODCS Excel
+* SQL DDL
+* dbt manifests
+
+### Existing ODCS YAML
 
 ```bash
 det workbook import orders.xlsx \
   --from-contract orders.odcs.yaml
 ```
 
-### Standard ODCS Excel
+### Existing standard ODCS workbook
 
 ```bash
 det workbook import orders.xlsx \
@@ -311,9 +523,47 @@ det workbook import orders.xlsx \
   --from-dbt-manifest upstream/target/manifest.json
 ```
 
-Imported structures are intentionally not assumed to be transformation mappings.
+For `.xlsx` input, DET delegates official workbook interpretation to Data Contract CLI.
 
-If the structure really represents a one-to-one source, identity mappings can be requested explicitly:
+The workflow is:
+
+```text
+Official ODCS Excel
+        ↓
+Data Contract CLI
+        ↓
+Canonical temporary ODCS YAML
+        ↓
+DET ODCS importer
+        ↓
+DET workbook
+```
+
+DET does **not** maintain a second independent parser for the official ODCS Excel format.
+
+Each import creates:
+
+* `Fundamentals`
+* one `Schema <model>` tab per imported object
+* matching `DET Models` rows
+
+Mapping, parameter, rule and lookup decisions remain empty for review.
+
+Imported models are disabled by default so incomplete transformation logic cannot accidentally be generated.
+
+Enable the model only after defining its inputs and mappings.
+
+---
+
+## Explicit identity mappings
+
+DET deliberately does **not** assume:
+
+```text
+target field = same-named source field
+```
+
+If the imported structure genuinely represents a one-to-one source, opt into identity mappings explicitly:
 
 ```bash
 det workbook import orders.xlsx \
@@ -321,191 +571,646 @@ det workbook import orders.xlsx \
   --identity-mappings
 ```
 
+This also enables the imported models.
+
+Identity mappings are never inferred by default because treating a published target automatically as its own source can hide the real transformation logic.
+
+The broader Data Contract CLI import/export formats remain documented in:
+
+* [Official import guide](https://docs.datacontract.com/imports)
+* [Excel export guide](https://docs.datacontract.com/exports/excel)
+
 ---
 
-## 4. Define the data product
+# Step 3 — Define the product and output schema
 
-The workbook separates **what the product promises** from **how dbt implements it**.
+Open `Fundamentals` and define the product-level information.
 
-### ODCS / contract surfaces
+Typical fields include:
 
-Examples include:
+* stable Product ID
+* name
+* version
+* status
+* domain
+* purpose
+* owner
+
+Product ID must use lowercase snake case because it becomes the dbt project name.
+
+For example:
 
 ```text
-Fundamentals
+orders_data_product
+```
+
+---
+
+## Define published fields
+
+In each:
+
+```text
 Schema <model>
-Relationships
-Quality
-SLA
-Servers
-Team
-Roles
-Support
-Pricing
-Custom Properties
 ```
 
-### DET implementation surfaces
+tab, define one row for each published field.
 
-Examples include:
+Example:
+
+| Property         | Logical Type | Physical Type              | Required | Primary Key | DET Implementation |
+| ---------------- | ------------ | -------------------------- | -------- | ----------- | ------------------ |
+| `customer_id`    | `string`     | `varchar`                  | Yes      | Yes         | `mapped`           |
+| `email`          | `string`     | `varchar`                  | No       | No          | `mapped`           |
+| `_det_loaded_at` | `timestamp`  | `timestamp with time zone` | No       | No          | `audit`            |
+
+Every published field must either:
+
+* be implemented through mapping
+* be declared `audit`
+* be declared `system-generated`
+
+These rows become:
+
+* ODCS properties
+* dbt model column contracts
+
+Required, primary-key and unique constraints are synchronized into dbt tests through Data Contract CLI.
+
+DET does not create a second competing representation of the same constraints.
+
+---
+
+## Advanced ODCS properties
+
+Common business-facing columns such as:
+
+* Primary Key
+* DET Implementation
+
+remain visible by default.
+
+Advanced ODCS fields are grouped and hidden, rather than removed.
+
+Expand the group when you need fields such as:
+
+* constraints
+* encryption
+* transform metadata
+* complex-type definitions
+
+Imported ODCS extensions are retained inside:
 
 ```text
-DET Models
+_DET Raw ODCS
+```
+
+and merged back during emission rather than being silently discarded.
+
+---
+
+# Step 4 — Register or import source schemas
+
+This step defines the upstream tables that generated models are allowed to read.
+
+`DET Sources` gives each source table a short workbook relation name.
+
+Example:
+
+| Relation        | Source Name | Table Name      |
+| --------------- | ----------- | --------------- |
+| `crm_customers` | `raw`       | `raw_customers` |
+
+You may enter `DET Source Schema` manually, but importing the structure is safer.
+
+---
+
+# Importing source metadata from dbt
+
+First generate an upstream manifest from the **upstream dbt project's directory** — the directory containing its `dbt_project.yml`.
+
+```bash
+cd /absolute/path/to/upstream_dbt_project
+
+dbt deps --profiles-dir /absolute/path/to/profiles
+
+dbt parse --profiles-dir /absolute/path/to/profiles
+
+test -f target/manifest.json
+```
+
+`dbt deps` installs packages required by that upstream project.
+
+`dbt parse`:
+
+* validates Jinja
+* validates YAML
+* produces `manifest.json`
+* does **not** query the warehouse
+
+By default, the manifest is created at:
+
+```text
+<upstream project>/target/manifest.json
+```
+
+relative to the active `dbt_project.yml`.
+
+If the upstream project overrides `--target-path`, use that directory instead.
+
+Relevant dbt documentation:
+
+* [Manifest contents and location](https://docs.getdbt.com/reference/artifacts/manifest-json)
+* [`dbt parse`](https://docs.getdbt.com/reference/commands/parse)
+
+---
+
+## Import the upstream sources
+
+Return to the toolkit directory and provide the absolute manifest path:
+
+```bash
+cd /absolute/path/to/dbt_data_engineering_toolkit
+
+det source import \
+  --workbook orders_data_product.xlsx \
+  --from-dbt-manifest /absolute/path/to/upstream_dbt_project/target/manifest.json \
+  --replace
+```
+
+You can also import from a contract:
+
+```bash
+det source import \
+  --workbook orders_data_product.xlsx \
+  --from-contract upstream.odcs.yaml \
+  --relation crm_customers \
+  --replace
+```
+
+Or DDL:
+
+```bash
+det source import \
+  --workbook orders_data_product.xlsx \
+  --from-ddl raw_customers.sql \
+  --relation crm_customers \
+  --source-name raw \
+  --replace
+```
+
+The inputs behave as follows:
+
+| Input                 | What DET reads                                                         | What you may need to change                                                              |
+| --------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `--from-dbt-manifest` | Every declared dbt `source` and documented columns                     | Run `dbt parse` again when upstream YAML changes and provide the new manifest            |
+| `--from-contract`     | ODCS schema objects and properties                                     | Use `--relation` only for a single-schema contract when you want another workbook alias  |
+| `--from-ddl`          | `CREATE TABLE` names, columns, types, nullability and inline key hints | Set the intended dbt `--source-name`; use one DDL table when also supplying `--relation` |
+
+---
+
+## `--replace` behaviour
+
+`--replace` only removes and recreates the imported:
+
+* source relations
+* source-column rows
+
+It does **not** overwrite:
+
+* target schemas
+* mappings
+* parameters
+* lookups
+* quality rules
+
+Without `--replace`, the importer:
+
+* updates matching fields
+* adds new fields
+
+---
+
+## Do not confuse the two manifests
+
+Two unrelated files called manifests appear in the full workflow.
+
+| File                                        | Created by     | Purpose                                                              |
+| ------------------------------------------- | -------------- | -------------------------------------------------------------------- |
+| `upstream_dbt_project/target/manifest.json` | `dbt parse`    | Discovery input describing models, sources, columns and dependencies |
+| `generated_project/.det-manifest.json`      | `det generate` | Hash ledger used to detect generated-file drift                      |
+
+The first is an input from dbt.
+
+The second is DET's generation ledger.
+
+The source schema loaded into the workbook allows the compiler to reject issues such as:
+
+* misspelled source fields
+* incompatible operation input types
+* invalid join keys
+
+before generation.
+
+---
+
+# Step 4A — Refresh workbook contextual choices
+
+Import and synchronization commands refresh workbook controls automatically.
+
+If you manually add or rename:
+
+* models
+* schema properties
+* source relations
+* operations
+* lookups
+
+close Excel and run:
+
+```bash
+det workbook refresh orders_data_product.xlsx
+```
+
+Then reopen the workbook.
+
+Contextual validation lists are rebuilt so that:
+
+* Target Field is restricted by Model
+* Source Field is restricted by Source Relation
+* join keys are restricted by relation
+* Input Relation is restricted by model
+* Parameter is restricted by operation
+* Value is restricted by operation
+* Lookup is restricted to declared lookup names
+
+These workbook controls help authors avoid invalid choices.
+
+They are not the authoritative validation layer.
+
+`det validate` remains authoritative.
+
+---
+
+# Step 5 — Define models and ordered inputs
+
+Each row in `DET Models` defines a generated model.
+
+Example:
+
+| Model           | Layer     | Materialization | Grain         | Enforce Contract |
+| --------------- | --------- | --------------- | ------------- | ---------------- |
+| `stg_customers` | `staging` | `table`         | `customer_id` | Yes              |
+
+Then define model inputs in:
+
+```text
 DET Model Inputs
-DET Sources
-DET Source Schema
-DET Mapping
-DET Parameters
-DET Lookups
-DET Relationships
-Operational Validation
-Operational Parameters
-DET Build
 ```
 
-This allows business-facing contract information and engineering implementation information to coexist without becoming the same thing.
+Example:
+
+| Model           | Order | Input Relation  |
+| --------------- | ----: | --------------- |
+| `stg_customers` |     1 | `crm_customers` |
+
+The compiler validates issues such as:
+
+* missing model inputs
+* missing grain fields
+* model dependency cycles
+* source relations referenced outside declared model inputs
+* unsafe many-to-many relationships
+
+before dbt is invoked.
+
+`incremental` materialization is deliberately not advertised in V2.3.0 until watermark and merge semantics are fully declarative.
 
 ---
 
-# Source-to-target mapping
+# Step 6 — Build source-to-target mappings
 
-Mappings remain deliberately compact.
+`DET Mapping` is deliberately compact.
 
-A mapping identifies:
+Each row identifies:
+
+* Model
+* Target Field
+* Source Relation
+* Source Field
+* Step
+* Operation
+
+Example:
+
+| Model           | Target Field | Source Relation | Source Field    | Step | Operation     |
+| --------------- | ------------ | --------------- | --------------- | ---: | ------------- |
+| `stg_customers` | `email`      | `crm_customers` | `email_address` |    1 | `Clean email` |
+
+Multiple rows against the same target field represent ordered transformation steps:
 
 ```text
-Model
-Target Field
-Source Relation
-Source Field
-Step
-Operation
+Step 1
+   ↓
+Step 2
+   ↓
+Step 3
 ```
 
-For example:
+Operation-specific options are stored separately in `DET Parameters`.
 
-| Model           | Target Field   | Source Relation | Source Field    | Step | Operation             |
-| --------------- | -------------- | --------------- | --------------- | ---: | --------------------- |
-| `stg_customers` | `email`        | `crm_customers` | `email_address` |    1 | `Clean email`         |
-| `stg_customers` | `country_code` | `crm_customers` | `country`       |    1 | `Standardize country` |
-
-Operation-specific configuration lives separately in `DET Parameters`, rather than turning the mapping sheet into a huge configuration form.
-
-Multiple operations can be chained against the same target field using ordered steps.
+This avoids turning the source-to-target mapping into a 20+ column configuration form.
 
 ---
 
-# Multi-source products and joins
+# Example — mapping and formatting a value
 
-Models explicitly declare their input relations.
+Suppose the target field is:
 
-For example:
+```text
+event_date_display
+```
 
-| Model               | Order | Input Relation     |
-| ------------------- | ----: | ------------------ |
-| `customer_accounts` |     1 | `crm_customers`    |
-| `customer_accounts` |     2 | `billing_accounts` |
+and the source contains:
 
-Relationships are also explicit.
+```text
+event_code
+```
 
-The compiler validates:
+The mapping could be:
 
-* relation existence
-* join keys
-* model inputs
-* dependency cycles
-* grain
-* source usage
-* expected cardinality
+| Model           | Target Field         | Source Relation | Source Field | Step | Operation    |
+| --------------- | -------------------- | --------------- | ------------ | ---: | ------------ |
+| `stg_customers` | `event_date_display` | `crm_customers` | `event_code` |    1 | `Map values` |
 
-Unsafe many-to-many joins can therefore be surfaced **before generated dbt reaches production**.
+Its parameters are declared separately:
 
-Declared cardinality can also result in generated uniqueness tests where one side of the relationship is expected to be unique.
+| Model           | Target Field         | Step | Parameter        | Value         |
+| --------------- | -------------------- | ---: | ---------------- | ------------- |
+| `stg_customers` | `event_date_display` |    1 | `Lookup`         | `event_dates` |
+| `stg_customers` | `event_date_display` |    1 | `Default`        | `2026-01-01`  |
+| `stg_customers` | `event_date_display` |    1 | `Data Type`      | `date`        |
+| `stg_customers` | `event_date_display` |    1 | `Format Pattern` | `%d/%m/%Y`    |
+
+And the lookup itself is defined in:
+
+```text
+DET Lookups
+```
+
+| Lookup        | Source Value | Target Value |
+| ------------- | ------------ | ------------ |
+| `event_dates` | `launch`     | `2026-09-04` |
+| `event_dates` | `renewal`    | `2027-01-15` |
+
+The generated model remains understandable SQL/Jinja:
+
+```sql
+{{ de_toolkit.mapping(
+    expression='event_code',
+    mapping={
+        'launch': '2026-09-04',
+        'renewal': '2027-01-15'
+    },
+    default='2026-01-01',
+    data_type='date',
+    format={'pattern': '%d/%m/%Y'}
+) }} as event_date_display
+```
+
+There is no:
+
+```text
+select_cleaned
+```
+
+macro and no model-level cleaning dictionary.
+
+The compiler emits source/ref CTEs and inline `de_toolkit` expressions.
 
 ---
 
-# Data quality and operational behaviour
+# End-to-end type flow
 
-The toolkit separates two related concerns.
+The compiler tracks the inferred type after every transformation step.
+
+It then compares the final type against the declared target type in:
+
+```text
+Schema <model>
+```
+
+For example, formatting a date using:
+
+```text
+%d/%m/%Y
+```
+
+produces a published string representation.
+
+It does **not** remain a date simply because the input began as a date.
+
+This type flow is validated before generation.
+
+---
+
+# Step 7 — Define quality and operational behaviour
+
+The toolkit deliberately separates:
+
+1. **contract-level data quality**
+2. **runtime operational handling**
+
+---
 
 ## Contract quality
 
-Business-facing data-quality expectations belong in the ODCS `Quality` surface.
+Contract-level rules belong in the visible official ODCS:
 
-These describe what the data product promises.
+```text
+Quality
+```
 
-Supported rule forms include:
+sheet.
 
-* library rules
-* SQL rules
-* custom rules
-* text rules
+Supported ODCS quality rule forms include:
 
-Schema constraints such as required, primary-key and uniqueness expectations remain part of the data contract rather than being duplicated in a competing DET format.
+* `library`
+* `sql`
+* `custom`
+* `text`
 
-## Operational validation
+The `Quality` sheet is authoritative and is consumed directly by the compiler.
 
-Runtime row-handling behaviour belongs in `Operational Validation`.
+Library rules map workbook:
 
-A rule can explicitly define what should happen when validation fails:
+* rule
+* operator
+* value
 
-| Failure behaviour | Result                                         |
-| ----------------- | ---------------------------------------------- |
-| `Allow`           | Document the rule and continue                 |
-| `Warn`            | Add the rule to `_det_warnings`                |
-| `Reject row`      | Route the row into rejection/quarantine output |
-| `Fail build`      | Generate a failing dbt test                    |
+fields into canonical `QualityRule` objects.
 
-This makes quality expectations and operational consequences explicit rather than burying them inside SQL.
+Advanced columns preserve:
+
+* stable rule IDs
+* dimensions
+* JSON ODCS passthrough fields
+
+There is one contract-quality authoring surface:
+
+```text
+Quality
+```
 
 ---
 
-# Validate before generating
+## Schema-level constraints
 
-Before generating anything:
+Properties such as:
+
+* Required
+* Primary Key
+* Unique
+
+belong to the ODCS schema.
+
+For `fail build` behaviour, those constraints remain owned by ODCS schema flags.
+
+DET does not create a second representation.
+
+---
+
+## Operational validation
+
+Runtime row-routing and cross-field predicates belong in:
+
+```text
+Operational Validation
+```
+
+Each rule explicitly defines its failure behaviour.
+
+| Failure      | Generated behaviour                                                              |
+| ------------ | -------------------------------------------------------------------------------- |
+| `Allow`      | Rule is documented; row continues                                                |
+| `Warn`       | Named item is added to `_det_warnings`; row continues                            |
+| `Reject row` | Named item is added to `_det_rejections`; valid and rejected views are generated |
+| `Fail build` | Singular dbt test is generated with error severity                               |
+
+`Unique` is rejected for `Warn` and `Reject row` because uniqueness is aggregate logic and cannot safely be represented as a row-level `where` predicate.
+
+---
+
+## Example generated validation
+
+Email and revenue rules might compile to:
+
+```sql
+validated as (
+    select
+        *,
+        {{ de_toolkit.is_email(
+            'email',
+            allow_null=false
+        ) }} as _email_invalid_valid,
+
+        {{ de_toolkit.is_positive(
+            'revenue',
+            allow_null=true
+        ) }} as _revenue_not_positive_valid
+
+    from transformed_01
+)
+```
+
+The implementation remains inspectable.
+
+---
+
+# Join cardinality as executable intent
+
+Relationships do more than describe joins.
+
+Declared cardinality is also used as a validation and testing signal.
+
+For:
+
+* one-to-one
+* one-to-many
+* many-to-one
+
+relationships, the compiler can generate uniqueness tests on the side expected to be unique.
+
+Unsafe many-to-many relationships are surfaced before dbt execution.
+
+This turns cardinality from documentation into an explicit engineering constraint.
+
+---
+
+# Step 8 — Validate before generating
+
+Run:
 
 ```bash
 det validate orders_data_product.xlsx
 ```
 
-Validation checks include:
+A safe blank workbook may produce:
+
+```text
+Valid: Orders Data Product (0 models, 0 mapped columns, 0 rules)
+```
+
+The explicit Customer 360 demonstration workbook may produce:
+
+```text
+Valid: Customer 360 (1 models, 6 mapped columns, 3 rules)
+```
+
+Validation covers areas including:
 
 * identifiers
+* model inputs
 * source fields
 * target fields
-* model inputs
 * source-to-target mappings
-* operation parameters
+* end-to-end type flow
+* required parameters
+* irrelevant parameters
+* published-field implementation
 * lookup names
-* type flow
-* target compatibility
-* model grain
-* dependency cycles
 * duplicate mappings
 * duplicate rules
-* published-field implementation
+* model dependency cycles
+* grain fields
+* ODCS quality vocabulary
+* join relationships
 * join keys
 * join cardinality
-* ODCS quality vocabulary
 
-Errors identify the relevant workbook location and explain what needs to be corrected.
+Errors identify:
 
-This is one of the primary goals of the toolkit:
+* the relevant workbook sheet
+* the row
+* the business problem
+* a suggested correction
 
-> **Move implementation problems left — into the specification — instead of discovering them during or after dbt development.**
+The aim is to move problems left:
+
+> **Catch engineering inconsistencies in the product specification before they become dbt implementation defects.**
 
 ---
 
-# Preview before changing generated code
+# Step 9 — Preview generation before publishing
 
-Inspect the current state:
+Inspect the current generated state:
 
 ```bash
 det status orders_data_product.xlsx \
   --project-dir build/orders
 ```
 
-Preview generation:
+Preview all final post-sync file operations:
 
 ```bash
 det generate orders_data_product.xlsx \
@@ -514,7 +1219,7 @@ det generate orders_data_product.xlsx \
   --prune
 ```
 
-Then publish:
+Then generate:
 
 ```bash
 det generate orders_data_product.xlsx \
@@ -522,15 +1227,117 @@ det generate orders_data_product.xlsx \
   --prune
 ```
 
-Generation is deterministic.
+To produce only canonical contract artifacts:
 
-No timestamps are written into generated files.
+```bash
+det compile orders_data_product.xlsx \
+  --output-dir build/contracts
+```
 
 ---
 
-# Generated dbt is still dbt
+# Dry-run means real validation, not fake generation
 
-A generated project contains ordinary files such as:
+Both:
+
+```text
+det status
+```
+
+and:
+
+```text
+det generate --dry-run
+```
+
+create a disposable staged project.
+
+They perform the real Data Contract synchronization against that staging area.
+
+They do not publish the result.
+
+Normal generation publishes only after:
+
+* synchronized YAML validates
+* synchronized tests validate
+* final output validation succeeds
+
+---
+
+# Reproducible cache handling
+
+Generated project caches such as:
+
+```text
+target/
+logs/
+dbt_packages/
+```
+
+are intentionally invalidated after successful publication.
+
+They are not copied into the generation transaction.
+
+These are reproducible runtime artifacts rather than authoritative generated source.
+
+---
+
+# Deterministic generation
+
+Generation intentionally writes no timestamps into generated files.
+
+Given the same:
+
+* workbook
+* compiler
+* registry
+* ODCS behaviour
+* adapter configuration
+
+the generated content should remain deterministic.
+
+This makes diffs meaningful and supports drift detection.
+
+---
+
+# `.det-manifest.json`
+
+Generation creates:
+
+```text
+.det-manifest.json
+```
+
+The manifest tracks the final post-sync state, including information such as:
+
+* generated file hashes
+* workbook hash
+* compiler version
+* workbook version
+* operator registry version
+* operator registry fingerprint
+* ODCS version
+* selected adapter
+* artifact authority
+* compiler ownership
+* Data Contract ownership
+
+If a generated file is manually changed, a later generation refuses to silently overwrite it.
+
+The expected resolution is to:
+
+1. move the intended change back into the workbook or compiler, or
+2. explicitly review and use `--force` only as a recovery mechanism
+
+`--prune` only deletes unchanged files that the previous manifest proves were generated.
+
+---
+
+# Step 10 — Inspect the generated data product
+
+A generated project contains ordinary dbt and contract artifacts.
+
+Example:
 
 ```text
 contracts/
@@ -550,20 +1357,34 @@ models/
 
 tests/
     datacontract_cli/
+    ...
 
 dbt_project.yml
 packages.yml
 profiles.yml
+
 .sqlfluff
 .sqlfluffignore
+
 Makefile
 README.md
+
 .det-manifest.json
 ```
 
-The workbook and compiler are not required to understand the generated SQL.
+ODCS describes **what the product promises**.
 
-For example, generated transformations remain explicit:
+DET metadata describes **how those promises become dbt**.
+
+The generated dbt project remains understandable and reviewable even when neither the workbook nor compiler is open.
+
+---
+
+# Generated dbt remains normal dbt
+
+This is an intentional design requirement.
+
+For example:
 
 ```sql
 select
@@ -573,89 +1394,90 @@ select
 from {{ source('crm', 'customers') }}
 ```
 
-This is intentional.
+The workbook helps define the implementation.
 
-The toolkit generates **dbt**, rather than creating a second runtime abstraction that happens to execute SQL.
+The compiler helps validate and generate the implementation.
 
----
+But the generated SQL remains:
 
-# Deterministic generation and drift protection
+* readable
+* reviewable
+* testable
+* executable
+* extendable
 
-Generated files are tracked in `.det-manifest.json`.
+dbt.
 
-The manifest records information such as:
-
-* generated file hashes
-* workbook hash
-* compiler version
-* workbook version
-* operator registry version
-* ODCS version
-* adapter
-* ownership of generated artefacts
-
-A later generation refuses to silently overwrite hand-edited generated files.
-
-That means changes have a clear home:
-
-| Change                | Authoritative location           |
-| --------------------- | -------------------------------- |
-| Business contract     | Workbook / ODCS                  |
-| Source definition     | Workbook or imported source      |
-| Mapping               | Workbook                         |
-| Transformation intent | Workbook                         |
-| Quality rules         | Workbook / ODCS                  |
-| Operational behaviour | Workbook                         |
-| Compiler behaviour    | Toolkit source                   |
-| Custom downstream SQL | Separate non-generated dbt model |
-
-Generated files should not become another independently maintained source of truth.
+The toolkit does not introduce a proprietary execution layer between the engineer and the warehouse.
 
 ---
 
-# Atomic generation
+# Step 11 — Install dependencies and run fast checks
 
-Generation uses a staged transaction:
+Generated `packages.yml` contains no local filesystem package path.
 
-```text
-workbook
-    ↓
-typed specification
-    ↓
-staged ODCS + DET + dbt
-    ↓
-Data Contract synchronization
-    ↓
-synchronized validation
-    ↓
-final hashes
-    ↓
-atomic publish
+It installs the canonical root package and, when required, the `aliases/de_toolkit` project from the same published repository revision configured in `DET Build`.
+
+Set the repository URL:
+
+```bash
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
 ```
 
-If synchronization, linting or synchronized-output validation fails, the existing generated project and its manifest are left untouched.
+Install dbt dependencies:
 
-This prevents a failed generation from leaving a half-updated project behind.
+```bash
+cd build/orders
 
----
+dbt deps --profiles-dir .
 
-# Check the generated product
+cd ../..
+```
 
-Run the fast verification gates:
+Then run:
 
 ```bash
 det check orders_data_product.xlsx \
   --project-dir build/orders
 ```
 
-`det check` verifies the generated product using the appropriate tooling, including:
+---
 
-* ODCS validation
-* Data Contract synchronization checks
-* dbt parsing
-* SQLFluff with the dbt templater
+# What `det check` does
 
-To run only the SQL lint gate:
+`det check` performs fast generated-project verification.
+
+It:
+
+1. delegates ODCS schema validation to the Data Contract Python API
+2. executes:
+
+```text
+datacontract dbt sync --dry-run
+```
+
+as a consistency check
+
+3. parses the generated dbt project
+4. executes SQLFluff using the dbt templater and generated `.sqlfluff`
+
+Data Contract, dbt and SQLFluff are all part of the default compiler dependency set.
+
+The emitted contract targets current:
+
+```text
+ODCS v3.1.0
+```
+
+Relevant documentation:
+
+* [ODCS guide](https://docs.datacontract.com/open-data-contract-standard)
+* [Quality-rule guide](https://docs.datacontract.com/quality-rules)
+* [Data Contract dbt synchronization](https://docs.datacontract.com/commands/dbt/sync)
+* [SQLFluff dbt templater configuration](https://docs.sqlfluff.com/en/stable/configuration/templating/dbt.html)
+* [dbt package dependency format](https://docs.getdbt.com/docs/build/packages)
+
+To run only SQL linting:
 
 ```bash
 det lint --project-dir build/orders
@@ -663,29 +1485,73 @@ det lint --project-dir build/orders
 
 ---
 
-# Prove the generated product
+# Adapter configuration and credentials
 
-For the full integration proof:
+`DET Build` selects an adapter provider.
+
+DuckDB works immediately for local execution.
+
+Profiles for:
+
+* BigQuery
+* Snowflake
+* Databricks
+* Redshift
+* Athena
+* ClickHouse
+* Spark
+* PostgreSQL
+
+contain only:
+
+```text
+env_var(...)
+```
+
+references.
+
+The required warehouse adapter/extra must be installed in the execution environment.
+
+Credentials are never stored in:
+
+* the workbook
+* generated profiles
+
+The generated README lists the exact environment variables required by the selected adapter.
+
+---
+
+# Step 12 — Prove the generated dbt flow
+
+Run the full release-grade proof:
 
 ```bash
 det prove orders_data_product.xlsx \
   --project-dir build/orders
 ```
 
-Proof runs against a disposable copy of the generated project and can include:
+`det prove` copies the generated project into a disposable sibling directory.
+
+It then performs the actual workflow against that copy.
+
+Conceptually:
 
 ```text
-dependency installation
+generated project
         ↓
-Data Contract synchronization
+disposable proof copy
         ↓
-source fixtures
+install dependencies
+        ↓
+real Data Contract synchronization
+        ↓
+seed available source fixtures
         ↓
 dbt parse
         ↓
 dbt build
         ↓
-synchronized tests
+execute synchronized tests
         ↓
 SQLFluff
         ↓
@@ -696,156 +1562,275 @@ The original generated project remains unchanged.
 
 ---
 
-# Import and synchronization
+# Realistic multi-source proof fixture
 
-Existing upstream structures can be imported from:
+The repository includes an optional realistic fixture at:
 
-* ODCS YAML
-* standard ODCS Excel
-* SQL DDL
-* dbt manifests
-
-For example:
-
-```bash
-det source import \
-  --workbook orders_data_product.xlsx \
-  --from-dbt-manifest /path/to/upstream/target/manifest.json \
-  --replace
+```text
+python/src/dbt_data_engineering_toolkit_compiler/resources/
+data_product_multi_source_sample.xlsx
 ```
 
-Or:
+Its generated project is checked in at:
 
-```bash
-det source import \
-  --workbook orders_data_product.xlsx \
-  --from-ddl raw_customers.sql \
-  --relation crm_customers \
-  --source-name raw \
-  --replace
+```text
+examples/compiler/customer_accounts
 ```
 
-When an upstream contract changes, merge it without destroying mapping work:
+The example demonstrates:
+
+* two sources
+* two models
+* a many-to-one join
+* a lookup
+* multi-step cleaning
+* contract tests
+* a warning
+* rejected rows
+* valid-row views
+* quarantine behaviour
+
+Its source seeds make the proof self-contained.
+
+Run:
 
 ```bash
-det workbook sync contracts/orders_data_product.xlsx \
+cd examples/compiler/customer_accounts
+
+dbt deps
+
+dbt seed \
+  --profiles-dir . \
+  --exclude package:dbt_project_evaluator
+
+dbt build \
+  --profiles-dir . \
+  --exclude package:dbt_project_evaluator
+
+dbt seed \
+  --profiles-dir . \
+  --select package:dbt_project_evaluator
+
+dbt run \
+  --profiles-dir . \
+  --select package:dbt_project_evaluator
+```
+
+Expected proof includes:
+
+* two seeds
+* both contract-enforced models
+* 14 product build nodes
+* synchronized ODCS tests
+* both quarantine views
+* 48 evaluator models
+
+passing successfully.
+
+The checked-in example project is already contract-synchronized through `det generate`.
+
+Running Data Contract synchronization manually against it would bypass DET's:
+
+* atomic write behaviour
+* path normalization
+* manifest tracking
+
+Sample data is never added by the normal `det workbook build` command unless explicitly requested.
+
+---
+
+# Step 13 — Adopt generated code safely
+
+There are two distinct update paths:
+
+1. changes to the **authoritative product specification**
+2. changes to **custom downstream implementation**
+
+Do not mix them.
+
+| What changed                                       | Authoritative edit                                             | Safe commands                                                     |
+| -------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Business contract, source, mapping, lookup or rule | Edit the workbook                                              | `det status`, dry-run generation, generation, check, prove        |
+| Upstream ODCS / DDL / dbt structure                | Re-import using `det workbook sync`                            | Review changes, repair mappings, validate and regenerate          |
+| Custom project-only SQL                            | Create a separate non-generated model downstream               | Normal lint/build workflow; do not add it to `.det-manifest.json` |
+| Compiler/emitter behaviour                         | Change toolkit source and publish a new revision               | Regenerate and review the complete diff                           |
+| Accidental edit to generated content               | Restore the file or move the intended change into the workbook | `det status` detects drift; `--force` is recovery-only            |
+
+---
+
+# Normal workbook-authoritative workflow
+
+The normal product-change sequence is:
+
+```bash
+det validate contracts/orders_data_product.xlsx
+
+det status \
+  contracts/orders_data_product.xlsx \
+  --project-dir dbt_orders
+
+det generate \
+  contracts/orders_data_product.xlsx \
+  --project-dir dbt_orders \
+  --dry-run \
+  --prune
+
+det generate \
+  contracts/orders_data_product.xlsx \
+  --project-dir dbt_orders \
+  --prune
+
+det check \
+  contracts/orders_data_product.xlsx \
+  --project-dir dbt_orders
+
+det prove \
+  contracts/orders_data_product.xlsx \
+  --project-dir dbt_orders
+```
+
+In short:
+
+```text
+edit
+  ↓
+validate
+  ↓
+inspect drift
+  ↓
+preview
+  ↓
+generate
+  ↓
+check
+  ↓
+prove
+```
+
+---
+
+# Synchronizing upstream structural changes
+
+When an external schema changes:
+
+```bash
+det workbook sync \
+  contracts/orders_data_product.xlsx \
   --from-contract upstream_orders.odcs.yaml
 ```
 
-Existing mapping, parameter, lookup and operational-validation decisions remain intact by default.
+The default behaviour is an additive/update merge.
 
-Any resulting incompatibility is surfaced through validation instead of being silently deleted.
+Existing rows in:
 
----
+* `DET Mapping`
+* `DET Parameters`
+* `Operational Validation`
+* `DET Lookups`
 
-# Supported adapters
+are retained.
 
-The toolkit supports configuration for:
-
-* BigQuery
-* Snowflake
-* DuckDB
-* Databricks
-* Redshift
-* Athena
-* ClickHouse
-* Spark
-* PostgreSQL
-
-DuckDB is available for local execution and proof without external warehouse credentials.
-
-Other generated profiles use environment-variable references rather than embedding credentials.
-
-The exact dbt Core, Fusion and warehouse proof level differs by adapter. See:
-
-* [Compatibility](docs/compatibility.md)
-* [Testing](docs/testing.md)
-
----
-
-# Release quality
-
-Current release gates include:
-
-| Gate                                      | Result |
-| ----------------------------------------- | -----: |
-| Python statement coverage                 | 85.01% |
-| dbt DuckDB-scoped implementation coverage | 98.53% |
-| dbt public-API direct execution coverage  |   100% |
-
-Release gates fail below 80%.
-
-For the exact coverage definitions, commands and warehouse matrix, see [Testing](docs/testing.md).
-
----
-
-# Architecture
-
-The public dbt API and compiler are intentionally separated.
+Use:
 
 ```text
-CLI / future API
-       ↓
-ToolkitApplication
-       ↓
-workbook
-import
-validation
-emission
-proof services
-       ↓
-file
-workbook
-dbt
-SQLFluff
-Data Contract
-brokers
+--replace-schema
 ```
 
-External libraries and commands are confined to broker boundaries.
+only when fields removed upstream should also be removed from target schema tabs.
 
-The compiler operates on typed structures rather than passing workbook rows directly through the application.
+If an existing mapping now references a removed or incompatible field, DET deliberately does **not** delete the mapping silently.
 
-Validation and emission are also separated:
+Instead:
+
+```bash
+det validate
+```
+
+surfaces the inconsistency for review.
+
+---
+
+# Two supported dbt macro namespaces
+
+dbt does not provide a global Python-style package alias in `packages.yml`.
+
+A Jinja assignment such as:
+
+```jinja
+{% set de_toolkit = dbt_data_engineering_toolkit %}
+```
+
+is scoped only to the model where it is declared.
+
+V2.3.0 therefore provides a real companion dbt package called:
 
 ```text
-input
-  ↓
-typed specification
-  ↓
-validators
-  ↓
-validated specification
-  ↓
-emitters
-  ↓
-artifacts
+de_toolkit
 ```
 
-For the full design, see [Architecture](docs/architecture.md).
+Once both package roots are installed, either form works globally.
+
+Canonical namespace:
+
+```sql
+{{ dbt_data_engineering_toolkit.clean_string('customer_name') }}
+```
+
+Short namespace:
+
+```sql
+{{ de_toolkit.clean_string('customer_name') }}
+```
+
+Example:
+
+```sql
+select
+    {{ dbt_data_engineering_toolkit.clean_string(
+        'customer_name'
+    ) }} as canonical_name,
+
+    {{ de_toolkit.clean_string(
+        'customer_name'
+    ) }} as short_name
+
+from {{ ref('raw_customers') }}
+```
+
+The short package contains only generated thin wrappers.
+
+`dbt_data_engineering_toolkit` remains the actual implementation and dependency boundary.
+
+Both namespaces therefore execute the same behaviour.
 
 ---
 
 # Documentation
 
-| Need                                      | Guide                                           |
-| ----------------------------------------- | ----------------------------------------------- |
-| Fastest runnable path                     | [Quickstart](docs/quickstart.md)                |
-| Full CLI reference                        | [CLI reference](docs/cli.md)                    |
-| ODCS, DDL and dbt imports                 | [Import and synchronization](docs/imports.md)   |
-| Workbook changes and generated-code drift | [Updating safely](docs/updating.md)             |
-| Compiler architecture                     | [Architecture](docs/architecture.md)            |
-| Adapter and Fusion support                | [Compatibility](docs/compatibility.md)          |
-| Coverage and release gates                | [Testing](docs/testing.md)                      |
-| Publishing and Package Hub                | [Deployment](docs/deployment.md)                |
-| dbt-only usage and macro recipes          | [SQL walkthrough](docs/sql_walkthrough.md)      |
-| Release details                           | [V2.3.0 release notes](V2.3.0_RELEASE_NOTES.md) |
+The README provides the complete conceptual and operational flow.
+
+More focused guides are available for deeper reference.
+
+| Need                                                | Guide                                           |
+| --------------------------------------------------- | ----------------------------------------------- |
+| Shortest runnable path                              | [Quickstart](docs/quickstart.md)                |
+| Every `det` command and its side effects            | [CLI reference](docs/cli.md)                    |
+| ODCS, DDL and manifest conversion                   | [Import and synchronization](docs/imports.md)   |
+| Workbook edits, code edits and generated-file drift | [Updating safely](docs/updating.md)             |
+| Broker → Service → Exposer architecture             | [Architecture](docs/architecture.md)            |
+| Adapter and Fusion support matrix                   | [Compatibility](docs/compatibility.md)          |
+| Coverage definitions and commands                   | [Testing](docs/testing.md)                      |
+| GitHub release and dbt Package Hub submission       | [Deployment](docs/deployment.md)                |
+| Full dbt-only walkthrough and recipes               | [SQL walkthrough](docs/sql_walkthrough.md)      |
+| First public release details                        | [V2.3.0 release notes](V2.3.0_RELEASE_NOTES.md) |
 
 ---
 
-# Installing the dbt package
+# Publishing and consuming V2.3.0
 
-Before publication to dbt Package Hub, install the package from Git:
+Before the canonical package is accepted into dbt Package Hub, pin the Git release.
+
+For only the canonical namespace:
 
 ```yaml
 packages:
@@ -853,7 +1838,7 @@ packages:
     revision: v2.3.0
 ```
 
-To also use the short `de_toolkit` namespace:
+To also install the short `de_toolkit` namespace:
 
 ```yaml
 packages:
@@ -865,31 +1850,69 @@ packages:
     subdirectory: aliases/de_toolkit
 ```
 
-The short namespace is a separate thin dbt project because dbt does not provide Python-style package aliases.
+After the canonical project is listed on Package Hub, consumers may install it using:
+
+```yaml
+package: YOUR_ORG/dbt_data_engineering_toolkit
+```
+
+The short:
+
+```text
+de_toolkit
+```
+
+namespace remains a second dbt project.
+
+Either:
+
+* retain the Git subdirectory dependency, or
+* publish the alias project as its own top-level repository/package
+
+dbt does not provide package-level Python-style aliases.
+
+The complete release, Package Hub submission, verification and rollback commands are documented in:
+
+[Deployment](docs/deployment.md)
 
 ---
 
-# Development
+# Development gates
 
-Install development dependencies:
+Install test dependencies:
 
 ```bash
 python -m pip install -e "./python[test]"
 ```
 
-Run the project gates:
+Validate that the alias package still matches the canonical API:
 
 ```bash
 python scripts/generate_alias_facade.py --check
-python scripts/static_check.py
+```
 
+Run static checks:
+
+```bash
+python scripts/static_check.py
+```
+
+Run the broader project quality gates:
+
+```bash
 make quality
 make python-coverage
 make dbt-coverage
 make codegen evaluator
 ```
 
-The current release supports dbt Core `1.10.6+` and declares the Fusion-compatible range:
+V2.3.0 supports:
+
+```text
+dbt Core 1.10.6+
+```
+
+and declares the Fusion-compatible range:
 
 ```text
 >=1.10.6,<3.0.0
@@ -897,16 +1920,140 @@ The current release supports dbt Core `1.10.6+` and declares the Fusion-compatib
 
 ---
 
-# The goal
+# Design principles
 
-The broader goal is deliberately simple:
+The toolkit is deliberately opinionated about a few things.
 
-> **Define a data product once, make the engineering intent explicit, validate it early, and turn it into consistent, readable and testable dbt.**
+## 1. Define the product once
 
-Not another proprietary data platform.
+The product definition should not have to be recreated separately in:
 
-Not another configuration language that hides the SQL.
+* requirements
+* spreadsheets
+* documentation
+* dbt YAML
+* tests
+* SQL implementation
 
-Not another mapping spreadsheet that drifts away from the implementation.
+The specification should be structured enough to generate and verify those downstream artifacts.
 
-A shared specification that creates a cleaner collaboration point between **BAs, analysts and data engineers**, backed by reusable engineering primitives and an implementation that remains recognisably **dbt**.
+---
+
+## 2. Make engineering intent explicit
+
+Mappings should show mappings.
+
+Joins should show joins.
+
+Cardinality should be declared.
+
+Quality should state both the expectation and operational consequence.
+
+Transformation steps should be ordered and named.
+
+The compiler should not have to guess what the author meant.
+
+---
+
+## 3. Validate before generating
+
+The best place to catch:
+
+* a missing field
+* the wrong type
+* an unsafe join
+* an incomplete mapping
+* a missing lookup
+* an invalid transformation sequence
+
+is before the generated project exists.
+
+---
+
+## 4. Prefer established standards
+
+ODCS remains the contract standard rather than inventing a toolkit-specific data-contract format.
+
+Existing dbt ecosystem capabilities are reused where appropriate rather than recreated unnecessarily.
+
+---
+
+## 5. Keep generated dbt readable
+
+Generated code should look like code a data engineer could reasonably have written themselves.
+
+The compiler must not become a prerequisite for understanding the implementation.
+
+---
+
+## 6. Preserve engineering control
+
+The workbook is a collaboration surface.
+
+It is not a replacement for data engineering expertise.
+
+Engineers retain control over implementation, architecture, execution and deployment.
+
+---
+
+## 7. Keep specification and implementation aligned
+
+If the workbook changes, the generated implementation can be regenerated and reviewed.
+
+If generated files are changed manually, drift detection makes that visible.
+
+This makes documentation and code much harder to accidentally evolve independently.
+
+---
+
+# The broader goal
+
+Ultimately, `dbt_data_engineering_toolkit` is trying to make this:
+
+```text
+Business need
+    ↓
+BA mapping spreadsheet
+    ↓
+analyst notes
+    ↓
+ticket comments
+    ↓
+engineering interpretation
+    ↓
+custom SQL
+    ↓
+custom tests
+    ↓
+documentation written later
+    ↓
+eventual drift
+```
+
+look more like this:
+
+```text
+Business Requirements
+        ↓
+Shared Data Product Specification
+        ↓
+Source-to-Target Mapping
+        ↓
+Explicit Engineering Intent
+        ↓
+Early Validation
+        ↓
+Deterministic dbt Generation
+        ↓
+dbt build / test / prove
+        ↓
+Reviewable Data Product
+```
+
+Or, more simply:
+
+> **Define a data product once, make the engineering intent explicit, validate it early, and turn it into consistent, readable and testable dbt rather than rebuilding the same plumbing for every data product.**
+
+The outcome is a cleaner collaboration point between **BAs, analysts and data engineers**, while keeping the final implementation where it belongs:
+
+**in readable, standard dbt.**
