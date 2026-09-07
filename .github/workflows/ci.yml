@@ -257,6 +257,8 @@ jobs:
       - name: Parse cloud targets with evaluator-safe Fusion settings
         if: matrix.adapter != 'duckdb'
         working-directory: integration_tests
+        env:
+          DBT_ALLOW_EXPERIMENTAL_ADAPTERS: ${{ matrix.adapter == 'spark' && 'true' || 'false' }}
         run: >-
           dbt parse --profiles-dir . --target "${{ matrix.target }}"
           --no-manage-state --vars '{deactivate_for_fusion: true}'
