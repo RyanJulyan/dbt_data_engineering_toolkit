@@ -78,9 +78,61 @@ the project or a pending trusted publisher with:
 | Workflow | `release.yml` |
 | Environment | `pypi` |
 
+This setup is required before the first automated publish. Trusted publishing will fail until PyPI
+has a matching trusted publisher entry for this repository/workflow/environment tuple.
+
+Before first publish, complete this checklist in PyPI:
+
+1. Sign in to PyPI and open `Publishing` for `dbt-data-engineering-toolkit-compiler`.
+2. If the project does not exist yet, create a pending trusted publisher (project can be created
+  on first successful OIDC publish).
+3. Add trusted publisher values that exactly match this repository:
+  `systemizing-solutions` / `dbt_data_engineering_toolkit` / `release.yml` / `pypi`.
+4. Save the publisher and then run the tagged release workflow.
+
+If you skip this, the `pypa/gh-action-pypi-publish` step is expected to fail with an identity or
+publisher mismatch error even when the build artifacts are valid.
+
 The workflow requests a short-lived OpenID Connect token through `id-token: write`; do not store a
 long-lived PyPI API token. PyPI documents the setup in its
 [trusted publisher guide](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/).
+
+## Automated PyPI publishing
+
+This repository uses GitHub Actions to automatically publish to PyPI when a release tag is pushed.
+
+### Setup (one-time configuration)
+
+1. Register a Trusted Publisher in PyPI for this exact tuple:
+  `systemizing-solutions` / `dbt_data_engineering_toolkit` / `release.yml` / `pypi`.
+2. Ensure the GitHub environment `pypi` exists and has required reviewers.
+3. Ensure `.github/workflows/release.yml` has `id-token: write` on the publish job.
+4. Confirm the version in `python/pyproject.toml`, `dbt/dbt_project.yml`, and
+  `aliases/de_toolkit/dbt_project.yml` matches the tag you will push.
+
+### How it works
+
+When you run bumpver and push the resulting tag:
+
+```bash
+./venv/bin/bumpver update --patch   # or --minor / --major
+```
+
+the release flow will:
+
+1. Validate the release tag and version alignment.
+2. Run quality and integration gates.
+3. Build wheel and source distributions.
+4. Publish to PyPI using OIDC trusted publishing (`pypa/gh-action-pypi-publish`).
+5. Attach release artifacts to the GitHub release for Package Hub consumption.
+
+### Security
+
+This approach avoids long-lived PyPI API tokens:
+
+1. No PyPI password/token is stored in repository secrets.
+2. PyPI verifies repo, workflow, ref, and environment identity via OIDC.
+3. Publishing can be constrained with GitHub environment approvals.
 
 ## 4. Run every release gate
 
@@ -125,9 +177,12 @@ adapters; their Core builds remain required. See the [compatibility matrix](comp
 
 ## 5. Build and inspect the PyPI artifacts locally
 
+### Build
+
 ```bash
-python -m build python --outdir dist
-python -m twine check dist/*
+cd python
+poetry install --with test,release
+poetry build
 python -m zipfile --list dist/dbt_data_engineering_toolkit_compiler-2.3.0-py3-none-any.whl
 ```
 
@@ -137,11 +192,49 @@ resources. Test the exact wheel in a clean environment:
 ```bash
 python -m venv /tmp/det-wheel-smoke
 /tmp/det-wheel-smoke/bin/python -m pip install \
-  dist/dbt_data_engineering_toolkit_compiler-2.3.0-py3-none-any.whl
+  python/dist/dbt_data_engineering_toolkit_compiler-2.3.0-py3-none-any.whl
 /tmp/det-wheel-smoke/bin/det --help
 /tmp/det-wheel-smoke/bin/det workbook build /tmp/release-smoke.xlsx --no-input
 /tmp/det-wheel-smoke/bin/det validate /tmp/release-smoke.xlsx
 ```
+
+### Publish (manual fallback)
+
+If automated publishing is unavailable, publish manually with Poetry from the `python/` directory.
+
+1. Build artifacts locally using the Build steps above.
+2. Create a PyPI API token (account settings -> API tokens), scoped to
+  `dbt-data-engineering-toolkit-compiler` when possible.
+3. Configure Poetry to use the token:
+
+```bash
+cd python
+poetry config pypi-token.pypi "pypi-..."
+```
+
+4. Optionally verify auth against TestPyPI first:
+
+```bash
+cd python
+poetry config repositories.testpypi https://test.pypi.org/legacy/
+poetry config pypi-token.testpypi "pypi-..."
+poetry publish -r testpypi
+```
+
+5. Publish from `python/`:
+
+```bash
+cd python
+poetry publish
+```
+
+6. Verify the new version appears in the project release list.
+
+Manual `poetry publish` does not use GitHub OIDC trusted publishing. Trusted publishing is only
+used by `pypa/gh-action-pypi-publish` in GitHub Actions.
+
+Use this only as an operational fallback. The preferred path is automated OIDC publishing from
+`release.yml`.
 
 ## 6. Push source and create the immutable release
 

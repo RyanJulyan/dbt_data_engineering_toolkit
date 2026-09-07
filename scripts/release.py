@@ -20,8 +20,10 @@ from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 
 def verify_tag(tag: str) -> None:
     expected = f"v{COMPILER_VERSION}"
-    if tag != expected:
-        raise ValueError(f"release tag is {tag!r}; expected {expected!r}")
+    allowed = {expected, COMPILER_VERSION}
+    if tag not in allowed:
+        allowed_list = ", ".join(repr(value) for value in sorted(allowed))
+        raise ValueError(f"release tag is {tag!r}; expected one of: {allowed_list}")
     root = yaml.safe_load((DBT_ROOT / "dbt_project.yml").read_text(encoding="utf-8"))
     alias = yaml.safe_load(
         (ROOT / "aliases/de_toolkit/dbt_project.yml").read_text(encoding="utf-8")
