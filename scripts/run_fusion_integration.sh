@@ -3,6 +3,9 @@ set -euo pipefail
 
 target="${1:?usage: run_fusion_integration.sh TARGET}"
 
+python -m pip install --upgrade pip
+python -m pip install "PyYAML>=6,<7"
+
 dbt deps --profiles-dir . --target "${target}"
 dbt build \
   --profiles-dir . \
