@@ -8,9 +8,29 @@ import subprocess
 import sys
 from pathlib import Path
 
+from openpyxl import load_workbook
+
+from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON_SOURCE = ROOT / "python" / "src"
+WORKBOOKS = (
+    ROOT / "python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_sample.xlsx",
+    ROOT
+    / "python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx",
+)
+
+
+def update_workbook_template_version(path: Path) -> None:
+    workbook = load_workbook(path)
+    try:
+        if "_DET Metadata" not in workbook.sheetnames:
+            raise ValueError(f"Workbook is missing _DET Metadata: {path}")
+        workbook["_DET Metadata"]["B4"] = COMPILER_VERSION
+        workbook.save(path)
+    finally:
+        workbook.close()
 
 
 def run_command(args: list[str]) -> None:
@@ -36,6 +56,8 @@ def run_command(args: list[str]) -> None:
 
 
 def main() -> int:
+    for workbook_path in WORKBOOKS:
+        update_workbook_template_version(workbook_path)
     run_command(
         [
             sys.executable,

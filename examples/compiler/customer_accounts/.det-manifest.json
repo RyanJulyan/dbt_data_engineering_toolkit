@@ -1,6 +1,6 @@
 {
   "adapter": "duckdb",
-  "compiler_version": "3.0.2",
+  "compiler_version": "3.0.3",
   "contract_authority": "datacontract",
   "dbt_adapter_dependency": "dbt-duckdb>=1.10,<2",
   "files": {
@@ -8,18 +8,18 @@
     ".sqlfluffignore": "16e2c1abd5df04cec716b37bebb05e98534be622889a99c18cfb72a53dbea262",
     "Makefile": "14022f027e99b547fd21e14a4c5c0fc9fb0dced3c85456d2682403cc636756a8",
     "README.md": "5267e7533564f1821fe15be5bd80451a602a26427a58510f5bf0a2e66c6670ee",
-    "contracts/customer_accounts.det.yaml": "db3cb8fa9ee9fcaa12fc5f9f99858606b3e3ea5e0ed740bff15ba9738a007f6f",
-    "contracts/customer_accounts.odcs.yaml": "92de59fa3c27034412866fa6852cc83a29f06ec85e2efaaf770a182c9b262aa9",
-    "dbt_project.yml": "50de1fef4531ed4d175e19a5e28633b5c115f04be6509333badd0da3bd834a82",
-    "models/marts/customer_account_mart.sql": "e4b52c1253820a87eacce1edbb432ad033252abe2c4fa8a2e70128f9c1fd8ccd",
-    "models/marts/customer_account_mart.yml": "1f64bb9bdfedb217f24b750fc419e2f52825bc83fc5dab32aa2f2fb6d2448c95",
-    "models/quarantine/customer_account_mart_rejected.sql": "141b42a7507d00c6784c6477ad2b4316e964f5fa793c40530049202a93d1d017",
-    "models/quarantine/customer_account_mart_valid.sql": "d380f413fe85a07e795a1f81b4970b675c85a5ef2684da820f8067b1226d415c",
-    "models/sources.yml": "754cf5e920472cd68a00bc3433e0bbeb2edb5b2ca727fe850427eaccc2c0b40f",
-    "models/staging/stg_customers.sql": "a51df8be52cdb76b3c44166de1dd1f3ddeb1604ce77eaf5b6fb6826f84b1337b",
-    "models/staging/stg_customers.yml": "e7c35ede0f883f4309a7634eecf6b0fed36f7cd58ecceed53a4d408e1608fced",
-    "packages.yml": "5c22eca5d59ac22c7d879c6a8c7453fb85ab4a002a36fa27eec0a39e2f4f7315",
-    "profiles.yml": "1ec4999b9c92fd4a34ac0f26795e9199638b3e88405e0bb187cd2bb257d62bd0",
+    "contracts/customer_accounts.det.yaml": "bd692d733163df637bbf35a8148554519c14f417d962a83a7128e4ae074a0182",
+    "contracts/customer_accounts.odcs.yaml": "408d939cd21fa166c1e2b33ecd2d6bc8ea436dc0f8577a1f57395e1369bc31d2",
+    "dbt_project.yml": "01144a71eb50051c53ad5ebd60829128774772c7771da7a4e3c3c834e26df70e",
+    "models/marts/customer_account_mart.sql": "83b898fdc83033fc7698fb85ca1a687365a72eb8c17a103ed28560450d93f7a9",
+    "models/marts/customer_account_mart.yml": "8cdbf238bf022f48061f17da042c65ae53bd0f1475fe26f30e773ac18f4d6296",
+    "models/quarantine/customer_account_mart_rejected.sql": "bc2ff396c49756b62e5ed07192dda734b5a0672a31bcf6f7b3fa1327d7e69a23",
+    "models/quarantine/customer_account_mart_valid.sql": "8e35053b15f32a54501eef0041b811a68fec0fc6a959fcf07d855f3ebc405fdc",
+    "models/sources.yml": "7685ec59b01641a2b37df85b112170d040181ed7f38a8480bffc24a9f614987e",
+    "models/staging/stg_customers.sql": "ce6bac00633b63f898e8367326429f5d09ce75c93eaa14620ad6f38b8777ed8d",
+    "models/staging/stg_customers.yml": "a9e409e4adb8be7380a3ef3a6189ee32d87768a7fb0283fb1c9358121ef80afe",
+    "packages.yml": "b692c297b070889c41a50f49b50c57311a3599a98a8fa8227bb581d4b92d2fd9",
+    "profiles.yml": "7e14b65540f3b20963b0c93be5eb97f996ee2aa4239c94c23c5d1e941c10d632",
     "tests/datacontract_cli/dc_stg_customers__q1__8c7789597d5a.sql": "46131f1fa5ea698a4f03c41b01e4a1ed2f288bdfb85ebcae39b4019c0a1e2483"
   },
   "managed_by": {
@@ -48,7 +48,7 @@
     ]
   },
   "odcs_version": "3.1.0",
-  "operator_registry_sha256": "63d2b950ce8bbc71970b53ea88f565f4b1316accc4ff288ace05532edfc75182",
-  "workbook_schema_version": "3.0.2",
-  "workbook_sha256": "c0a727678cfdb9c2ca09220d8a4f50ab7eb9e932d99f0247eaf7f033c453153c"
+  "operator_registry_sha256": "bf4c150acbff83880b41db78850d5e09436aa99c889805695f1d7a8a2b90bbeb",
+  "workbook_schema_version": "3.0.3",
+  "workbook_sha256": "1437cee927cb7e21090b62abfb1dcf06ad9de8f569f6df346ed8fb3e1aaf879c"
 }
