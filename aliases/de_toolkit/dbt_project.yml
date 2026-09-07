@@ -1,5 +1,5 @@
 name: de_toolkit
-version: 3.0.5
+version: 3.0.6
 config-version: 2
 
 require-dbt-version: [">=1.10.6", "<3.0.0"]
