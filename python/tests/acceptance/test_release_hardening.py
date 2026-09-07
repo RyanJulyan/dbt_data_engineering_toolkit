@@ -18,6 +18,7 @@ from dbt_data_engineering_toolkit_compiler.brokers.workbook_edits import (
     OpenpyxlWorkbookEditBroker,
 )
 from dbt_data_engineering_toolkit_compiler.errors import SpecificationValidationError
+from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION, WORKBOOK_SCHEMA_VERSION
 from dbt_data_engineering_toolkit_compiler.models import (
     BuildConfiguration,
     ColumnMapping,
@@ -80,7 +81,7 @@ def test_refresh_rejects_a_noncurrent_workbook_schema(tmp_path: Path) -> None:
     with pytest.raises(ValueError) as raised:
         OpenpyxlTemplateWorkbookBroker().refresh(workbook_path)
 
-    assert "v2.3.0 is required" in str(raised.value)
+    assert f"v{WORKBOOK_SCHEMA_VERSION} is required" in str(raised.value)
 
 
 def test_official_quality_rows_survive_excel_ir_and_odcs(tmp_path: Path) -> None:
@@ -293,7 +294,7 @@ def _portable_project(adapter: str) -> DataProductSpecification:
                 workbook_row=4,
             )
         ],
-        build=BuildConfiguration(adapter=adapter, toolkit_revision="v2.3.0"),
+        build=BuildConfiguration(adapter=adapter, toolkit_revision=f"v{COMPILER_VERSION}"),
     )
 
 

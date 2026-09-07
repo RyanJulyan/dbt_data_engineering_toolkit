@@ -8,6 +8,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 from dbt_data_engineering_toolkit_compiler.services.emissions.service import EmissionService
+from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 from dbt_data_engineering_toolkit_compiler.services.validation.service import (
     SpecificationValidationService,
 )
@@ -62,7 +63,7 @@ def test_multi_source_workbook_compiles_joined_readable_sql() -> None:
 def test_workbook_has_contextual_lists_and_release_metadata() -> None:
     workbook = load_workbook(fixture_workbook(), data_only=False)
     try:
-        assert workbook["_DET Metadata"]["B4"].value == "2.3.0"
+        assert workbook["_DET Metadata"]["B4"].value == COMPILER_VERSION
         assert len(str(workbook["_DET Metadata"]["B7"].value)) == 64
         assert workbook["_DET Metadata"]["B8"].value == "3.1.0"
         for name in ("_DET Lists", "_DET Metadata", "_DET Context", "_DET Raw ODCS"):

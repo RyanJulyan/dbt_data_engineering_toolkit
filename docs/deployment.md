@@ -1,6 +1,6 @@
-# Deploy V2.3.0 to PyPI and dbt Package Hub
+# Deploy V3.0.6 to PyPI and dbt Package Hub
 
-V2.3.0 publishes three related artifacts:
+V3.0.6 publishes three related artifacts:
 
 | Artifact | Distribution | Consumer API |
 | --- | --- | --- |
@@ -9,7 +9,7 @@ V2.3.0 publishes three related artifacts:
 | Python compiler | checked wheel and source distribution on PyPI with OIDC provenance | `det` |
 
 Package Hub consumes `dbt/`. PyPI consumes only `python/`. The release workflow publishes both
-from the same `v2.3.0` tag after the local quality gates pass.
+from the same `v3.0.6` tag after the local quality gates pass.
 
 ## 1. Create the permanent public repository
 
@@ -148,7 +148,7 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e "./python[test,release]"
 
-python scripts/release.py verify-tag v2.3.0
+python scripts/release.py verify-tag v3.0.6
 python scripts/generate_alias_facade.py --check
 python scripts/static_check.py
 make quality
@@ -162,7 +162,7 @@ det prove \
   --local-package-root .
 ```
 
-Expected coverage is at least 80% for both codebases. V2.3.0 records 85.01% Python statement
+Expected coverage is at least 80% for both codebases. V3.0.6 records 85.01% Python statement
 coverage, 98.53% (134/136) DuckDB-scoped dbt macro implementation coverage, and 100% (104/104)
 public-API direct execution coverage. Read the exact metric definitions in [testing](testing.md).
 
@@ -188,7 +188,7 @@ adapters; their Core builds remain required. See the [compatibility matrix](comp
 cd python
 poetry install --with test,release
 poetry build
-python -m zipfile --list dist/dbt_data_engineering_toolkit_compiler-2.3.0-py3-none-any.whl
+python -m zipfile --list dist/dbt_data_engineering_toolkit_compiler-3.0.6-py3-none-any.whl
 ```
 
 The wheel must contain `py.typed`, `resources/operators.yml`, and all three controlled workbook
@@ -197,7 +197,7 @@ resources. Test the exact wheel in a clean environment:
 ```bash
 python -m venv /tmp/det-wheel-smoke
 /tmp/det-wheel-smoke/bin/python -m pip install \
-  python/dist/dbt_data_engineering_toolkit_compiler-2.3.0-py3-none-any.whl
+  python/dist/dbt_data_engineering_toolkit_compiler-3.0.6-py3-none-any.whl
 /tmp/det-wheel-smoke/bin/det --help
 /tmp/det-wheel-smoke/bin/det workbook build /tmp/release-smoke.xlsx --no-input
 /tmp/det-wheel-smoke/bin/det validate /tmp/release-smoke.xlsx
@@ -249,13 +249,13 @@ For a new repository:
 ```bash
 git init
 git add .
-git commit -m "Release dbt_data_engineering_toolkit v2.3.0"
+git commit -m "Release dbt_data_engineering_toolkit v3.0.6"
 git branch -M main
 git remote add origin git@github.com:systemizing-solutions/dbt_data_engineering_toolkit.git
 git push -u origin main
 
-git tag -a v2.3.0 -m "dbt_data_engineering_toolkit v2.3.0"
-git push origin v2.3.0
+git tag -a v3.0.6 -m "dbt_data_engineering_toolkit v3.0.6"
+git push origin v3.0.6
 ```
 
 `.github/workflows/release.yml` repeats the release proof, requires the credentialed Core/Fusion
@@ -267,7 +267,7 @@ Hub.
 Verify both channels:
 
 ```bash
-gh release view v2.3.0 --repo systemizing-solutions/dbt_data_engineering_toolkit
+gh release view v3.0.6 --repo systemizing-solutions/dbt_data_engineering_toolkit
 python -m pip index versions dbt-data-engineering-toolkit-compiler
 ```
 
@@ -280,10 +280,10 @@ In a clean consumer project, create:
 ```yaml
 packages:
   - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
-    revision: v2.3.0
+    revision: v3.0.6
     subdirectory: dbt
   - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
-    revision: v2.3.0
+    revision: v3.0.6
     subdirectory: aliases/de_toolkit
 ```
 
@@ -314,7 +314,7 @@ git commit -m "Add systemizing-solutions/dbt_data_engineering_toolkit"
 git push -u origin add-dbt-data-engineering-toolkit
 gh pr create --repo dbt-labs/hubcap \
   --title "Add systemizing-solutions/dbt_data_engineering_toolkit" \
-  --body "Adds dbt_data_engineering_toolkit v2.3.0 to dbt Package Hub."
+  --body "Adds dbt_data_engineering_toolkit v3.0.6 to dbt Package Hub."
 ```
 
 After Hub ingestion, verify the registry dependency:
@@ -322,7 +322,7 @@ After Hub ingestion, verify the registry dependency:
 ```yaml
 packages:
   - package: systemizing-solutions/dbt_data_engineering_toolkit
-    version: 2.3.0
+    version: 3.0.6
 ```
 
 ```bash

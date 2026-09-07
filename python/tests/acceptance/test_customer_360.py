@@ -37,6 +37,7 @@ from dbt_data_engineering_toolkit_compiler.models import (
     SourceColumn,
     SourceSpecification,
 )
+from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 from dbt_data_engineering_toolkit_compiler.operational import Artifact
 from dbt_data_engineering_toolkit_compiler.registry import OperatorRegistry
 from dbt_data_engineering_toolkit_compiler.services.emissions.service import EmissionService
@@ -167,14 +168,16 @@ class WorkbookCompilerTests(unittest.TestCase):
         self.assertIn("{{ de_toolkit.assertions(", sql)
         self.assertNotIn("select_cleaned", sql)
         self.assertIn("apiVersion: v3.1.0", artifacts["contracts/customer_360.odcs.yaml"])
-        self.assertIn("apiVersion: det/v2.3.0", artifacts["contracts/customer_360.det.yaml"])
+        self.assertIn(
+            f"apiVersion: det/v{COMPILER_VERSION}", artifacts["contracts/customer_360.det.yaml"]
+        )
         self.assertIn("enforced: true", artifacts["models/staging/stg_customers.yml"])
         self.assertIn("templater = dbt", artifacts[".sqlfluff"])
         self.assertIn("tests/datacontract_cli/", artifacts[".sqlfluffignore"])
         self.assertIn("sqlfluff lint models tests --config .sqlfluff", artifacts["Makefile"])
         packages = artifacts["packages.yml"]
         self.assertIn("DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL", packages)
-        self.assertIn("revision: v2.3.0", packages)
+        self.assertIn(f"revision: v{COMPILER_VERSION}", packages)
         self.assertIn("subdirectory: aliases/de_toolkit", packages)
         self.assertNotIn("local:", packages)
 

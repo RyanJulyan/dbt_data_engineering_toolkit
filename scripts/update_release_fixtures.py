@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -16,6 +17,7 @@ from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON_SOURCE = ROOT / "python" / "src"
 WORKBOOKS = (
+    ROOT / "python/src/dbt_data_engineering_toolkit_compiler/resources/data_product.xlsx",
     ROOT / "python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_sample.xlsx",
     ROOT
     / "python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx",
@@ -26,6 +28,38 @@ RELEASE_OUTPUTS = [
     ROOT / "examples/compiler/customer_360",
     ROOT / "examples/compiler/customer_accounts",
 ]
+
+
+def release_versions() -> list[str]:
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    versions = re.findall(r"^## (\d+\.\d+\.\d+)\b", changelog, flags=re.MULTILINE)
+    return [version for version in versions if version != COMPILER_VERSION]
+
+
+def update_release_docs(new_version: str) -> list[Path]:
+    versions = release_versions()
+    if not versions:
+        return []
+    changed: list[Path] = []
+    doc_patterns = [
+        "docs/**/*.md",
+        "docs/**/*.html",
+        "README.md",
+        "python/README.md",
+        "examples/compiler/**/README.md",
+        "examples/end_to_end/README.md",
+        "index.html",
+    ]
+    for pattern in doc_patterns:
+        for path in ROOT.glob(pattern):
+            text = path.read_text(encoding="utf-8")
+            if not any(version in text for version in versions):
+                continue
+            for version in versions:
+                text = text.replace(version, new_version)
+            path.write_text(text, encoding="utf-8")
+            changed.append(path)
+    return changed
 
 
 def update_workbook_template_version(path: Path) -> None:
@@ -85,6 +119,8 @@ def stage_release_outputs() -> None:
 
 
 def main() -> int:
+    new_version = os.environ.get("BUMPVER_NEW_VERSION", COMPILER_VERSION)
+    updated_docs = update_release_docs(new_version)
     update_changelog()
     for workbook_path in WORKBOOKS:
         update_workbook_template_version(workbook_path)
@@ -135,6 +171,8 @@ def main() -> int:
         ]
     )
     stage_release_outputs()
+    if updated_docs:
+        run_command(["git", "add", "--", *[str(path.relative_to(ROOT)) for path in updated_docs]])
     return 0
 
 

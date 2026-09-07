@@ -6,6 +6,10 @@ import yaml
 from openpyxl import load_workbook
 
 from .paths import ROOT
+from dbt_data_engineering_toolkit_compiler.version import (
+    COMPILER_VERSION,
+    WORKBOOK_SCHEMA_VERSION,
+)
 
 
 def check_workbooks() -> list[str]:
@@ -107,8 +111,10 @@ def check_workbooks() -> list[str]:
         }
         if actual != expected:
             errors.append("data_product.xlsx: dropdowns differ from operators.yml")
-        if workbook["_DET Metadata"]["B4"].value != "2.3.0":
-            errors.append("data_product.xlsx: workbook schema metadata must be 2.3.0")
+        if workbook["_DET Metadata"]["B4"].value != WORKBOOK_SCHEMA_VERSION:
+            errors.append(
+                f"data_product.xlsx: workbook schema metadata must be {WORKBOOK_SCHEMA_VERSION}"
+            )
         if (
             workbook["_DET Metadata"]["A2"].value
             != "Compiler-owned version values. Do not edit."
@@ -120,8 +126,8 @@ def check_workbooks() -> list[str]:
             errors.append(
                 "data_product.xlsx: toolkit Git environment variable is stale"
             )
-        if workbook["DET Build"]["B8"].value != "v2.3.0":
-            errors.append("data_product.xlsx: toolkit revision must be v2.3.0")
+        if workbook["DET Build"]["B8"].value != f"v{COMPILER_VERSION}":
+            errors.append(f"data_product.xlsx: toolkit revision must be v{COMPILER_VERSION}")
     workbook.close()
     sample = load_workbook(
         compiler / "resources/data_product_sample.xlsx",

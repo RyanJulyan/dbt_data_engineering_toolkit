@@ -1,4 +1,4 @@
-# V2.3.0 compatibility matrix
+# V3.0.6 compatibility matrix
 
 The package supports dbt Core on all eight requested data platforms. It is also compatible with
 dbt Fusion wherever Fusion currently provides an adapter. Athena and ClickHouse remain Core-only
@@ -49,13 +49,13 @@ For versioned engines, the public macros require:
 The compiler includes dbt Core and DuckDB by default. Add the warehouse used by that deployment:
 
 ```bash
-python -m pip install "dbt-data-engineering-toolkit-compiler[bigquery]==2.3.0"
-python -m pip install "dbt-data-engineering-toolkit-compiler[snowflake]==2.3.0"
-python -m pip install "dbt-data-engineering-toolkit-compiler[databricks]==2.3.0"
+python -m pip install "dbt-data-engineering-toolkit-compiler[bigquery]==3.0.6"
+python -m pip install "dbt-data-engineering-toolkit-compiler[snowflake]==3.0.6"
+python -m pip install "dbt-data-engineering-toolkit-compiler[databricks]==3.0.6"
 ```
 
 Use a separate virtual environment per warehouse. In particular, Spark's upstream PyHive stack
-and the Databricks SQL connector currently require incompatible Thrift versions. V2.3.0 therefore
+and the Databricks SQL connector currently require incompatible Thrift versions. V3.0.6 therefore
 does not advertise a misleading `all-adapters` extra.
 
 ## What the gates prove
