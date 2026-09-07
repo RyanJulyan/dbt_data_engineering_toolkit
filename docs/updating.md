@@ -62,11 +62,10 @@ Do not add custom files to `.det-manifest.json`.
 8. Update `Toolkit Revision` in consumer workbooks.
 9. Regenerate consumer projects and review their complete diffs.
 
-Version updates are managed by bumpver from `python/pyproject.toml`.
+Version updates are managed by bumpver from the repository-root `bumpver.toml`.
 
 ```bash
-cd python
-python -m pip install -e ".[release]"
+python -m pip install -e "./python[release]"
 bumpver update --patch
 ```
 
