@@ -1,4 +1,4 @@
-# SQL-first V3.1.0 dbt walkthrough
+# SQL-first V3.2.0 dbt walkthrough
 
 Every public cleaning, transformation, formatting, and validation macro returns
 one SQL expression, keeping the model readable as ordinary SQL and Jinja.
@@ -11,14 +11,14 @@ Before Package Hub publication:
 ```yaml
 packages:
   - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
-    revision: v3.1.0
+    revision: v3.2.0
   - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
-    revision: v3.1.0
+    revision: v3.2.0
     subdirectory: aliases/de_toolkit
 ```
 {% endraw %}
 
-After publication, replace the first entry with the canonical Hub package at `3.1.0`. Keep the
+After publication, replace the first entry with the canonical Hub package at `3.2.0`. Keep the
 second Git entry when the short namespace is wanted.
 
 ## 2. Clean columns inline

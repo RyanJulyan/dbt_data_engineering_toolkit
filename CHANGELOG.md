@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0 - 2026-09-07
+
+- Refreshed the release fixtures and example package metadata for the 3.2.0 release.
+
 ## 3.1.0 - 2026-09-07
 
 - Refreshed the release fixtures and example package metadata for the 3.1.0 release.

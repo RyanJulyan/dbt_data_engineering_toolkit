@@ -1,23 +1,23 @@
 {
   "adapter": "duckdb",
-  "compiler_version": "3.1.0",
+  "compiler_version": "3.2.0",
   "contract_authority": "datacontract",
   "dbt_adapter_dependency": "dbt-duckdb>=1.10,<2",
   "files": {
     ".sqlfluff": "7675f06de098b399fbdf25d6bdf7316c062b016f2523365a56e7676626f99800",
     ".sqlfluffignore": "16e2c1abd5df04cec716b37bebb05e98534be622889a99c18cfb72a53dbea262",
     "Makefile": "14022f027e99b547fd21e14a4c5c0fc9fb0dced3c85456d2682403cc636756a8",
-    "README.md": "55c99360554c76cbf306677b41094e0702b5d804568a411d769ae72e984b67c6",
-    "contracts/customer_360.det.yaml": "df427d74c77437852bfaa025c90b727608d868da849391d01da80ec6661ad104",
-    "contracts/customer_360.odcs.yaml": "6c7dcf7c2bca59d96bc27aa3c33bc3d9ab9c3e689cb613dd16a3a56196b5ff19",
-    "dbt_project.yml": "2f4491a848417c5a6e9a7ba4016604733f046381fd1e288336e032120dad3f04",
-    "models/quarantine/stg_customers_rejected.sql": "7bd7923b219c9096b1223a337431160ba0f1b7d28178f2754925bfd6621e9d02",
-    "models/quarantine/stg_customers_valid.sql": "cde285a8c5cac24070f44246f43f081cfb49a08ca0cd41ce1bbe8cfea4cd61b5",
-    "models/sources.yml": "0a27d1a7fd23ec3a5e821a8b947e04f885f2f66c80f020ce0e954ec96e6187ff",
-    "models/staging/stg_customers.sql": "f29ea80cbf4b71f095c07907da45299ccd3a7e758f82b2c8e86ac7af21f324cb",
-    "models/staging/stg_customers.yml": "ebcf05b02bcecb73fdd218e51203691eb3d2a3186de5a43ab2f77874cb4e3706",
-    "packages.yml": "6e22bcf276b5f61ad12f36a385a1ab10b36b7f424a6cc31e72d0ea7ff8e4b2eb",
-    "profiles.yml": "8fe934edfc6b83f23e190553efad5af7cb86b2d2d34775cfd7aeba801d8186bd",
+    "README.md": "12f8331c174a2c47678ef8d0f680352576ac5fafe40877b3a56f0a5723c13bb8",
+    "contracts/customer_360.det.yaml": "9a5e7dae5c93801a712f496011b3ed98ac98c788e282aa14cb6941f97bb97e28",
+    "contracts/customer_360.odcs.yaml": "accbc9d0c13c1966f98204c65295755158047540658377b37670418660df54cb",
+    "dbt_project.yml": "f91d3af9024e6e6999d7e075c8bf4a951caf0eb54684efbad015e009622659f3",
+    "models/quarantine/stg_customers_rejected.sql": "ecbd56827937aed9aec8c89dbc60a2e2ed3e9386d92e35c18e53e007da5dfeb0",
+    "models/quarantine/stg_customers_valid.sql": "4a4e7b1e671727e5427a1d36e11f9f826847116e106373cdda612f7274e5753f",
+    "models/sources.yml": "f2bfee7cbdcefeb2e6dd891a579aeb8e6ffb25b186087dac21eea8247c64f26d",
+    "models/staging/stg_customers.sql": "5f3853ada999865913998089eca8bbd14641368e99688227e4203e2e2c0853c9",
+    "models/staging/stg_customers.yml": "9f223369ccfc29ca3f675e612ebcfa6726eca1ac11448b11cd94bff239fc1a5c",
+    "packages.yml": "a7f7155f3b99ca94764de82a688ec1ec57cb38ba6665137bb07b1ac65fd82237",
+    "profiles.yml": "544f62eedcb089455baa099e8fdd2a991351ac74fa31833405b28e0fe9bbc290",
     "tests/datacontract_cli/dc_stg_customers__the_published_cus__46e04bf08462.sql": "64484679bf79e0eec4591b50928a30bece72e486b60aa92a9ead2e33589a3892"
   },
   "managed_by": {
@@ -43,7 +43,7 @@
     ]
   },
   "odcs_version": "3.1.0",
-  "operator_registry_sha256": "9ae914bf42d345285c3985b0de3b6b64508eaf8096bb35b16913fcd190856139",
-  "workbook_schema_version": "3.1.0",
-  "workbook_sha256": "8e33fe751602b74ef483b2735d575452393e100fdb49a3421b56fc976c622d74"
+  "operator_registry_sha256": "10692e8a36e7534e55aa189aae4dcd8b67a9dea29bddd266458e1805bbe6a292",
+  "workbook_schema_version": "3.2.0",
+  "workbook_sha256": "3f6e0e9e7eee6653c4c21b16b5f0bec3e105a21af83e2d9e5081d856c207ae00"
 }

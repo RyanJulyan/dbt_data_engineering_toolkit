@@ -15,7 +15,7 @@ python -m pip install "dbt-data-engineering-toolkit-compiler[duckdb]==2.3.0"
 ```
 
 1. Point the generated two-package dependency graph at the published toolkit
-repository. Both entries are pinned to `v3.1.0`; the second entry installs
+repository. Both entries are pinned to `v3.2.0`; the second entry installs
 the short `de_toolkit` namespace from its subdirectory.
 
 ```bash

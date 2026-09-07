@@ -1,4 +1,4 @@
-# V3.1.0 import and synchronization
+# V3.2.0 import and synchronization
 
 All supported inputs become one typed `ImportedDataStructure`. That structure can populate
 output schemas (`workbook import` / `workbook sync`) or source metadata (`source import`).
