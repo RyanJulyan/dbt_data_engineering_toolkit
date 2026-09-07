@@ -1,5 +1,5 @@
 packages:
-  - local: ..
+  - local: ../dbt
     name: dbt_data_engineering_toolkit
   - local: ../aliases/de_toolkit
     name: de_toolkit
@@ -15,4 +15,4 @@ packages:
   - name: dbt_project_evaluator
     package: dbt-labs/dbt_project_evaluator
     version: 1.3.5
-sha1_hash: 12ecbb31fc38cb611d3f52f6dcada254c47b77be
+sha1_hash: 4a6ccba08d8a7654daf5f5992459e170bd4a35b1

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CANONICAL_MACROS = ROOT / "macros"
+CANONICAL_MACROS = ROOT / "dbt" / "macros"
 FACADE = ROOT / "aliases" / "de_toolkit" / "macros" / "facade.sql"
 TESTS = ROOT / "aliases" / "de_toolkit" / "macros" / "tests.sql"
 MACRO_PATTERN = re.compile(

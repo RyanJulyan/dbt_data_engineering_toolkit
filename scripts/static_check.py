@@ -23,7 +23,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    core_count = len(list((ROOT / "macros").rglob("*.sql")))
+    core_count = len(list((ROOT / "dbt" / "macros").rglob("*.sql")))
     alias_count = len(list((ALIAS_ROOT / "macros").rglob("*.sql")))
     print(
         f"Static checks passed ({core_count} canonical and {alias_count} alias SQL macro files)."

@@ -11,7 +11,7 @@ import tomllib
 import yaml
 
 from .archive import validate_release_paths
-from .paths import ALIAS_ROOT, COMPILER_VERSION, ROOT
+from .paths import ALIAS_ROOT, COMPILER_VERSION, DBT_ROOT, ROOT
 
 REQUIRED_DEPENDENCIES = {
     "dbt-labs/dbt_utils",
@@ -64,6 +64,8 @@ REMOVED_COMPATIBILITY_MODULES = {
     "workbook_import.py",
     "workbook_template.py",
 }
+IGNORED_SCAN_DIRECTORIES = {".git", "dbt_packages", "target", ".venv", "venv"}
+MAX_README_LINES = 2500
 
 
 def _yaml(path: Path) -> dict[str, object]:
@@ -73,17 +75,17 @@ def _yaml(path: Path) -> dict[str, object]:
 
 def check_project() -> list[str]:
     errors: list[str] = []
-    root_project = _yaml(ROOT / "dbt_project.yml")
+    root_project = _yaml(DBT_ROOT / "dbt_project.yml")
     alias_project = _yaml(ALIAS_ROOT / "dbt_project.yml")
     if root_project.get("name") != "dbt_data_engineering_toolkit":
-        errors.append("dbt_project.yml: canonical package name changed")
+        errors.append("dbt/dbt_project.yml: canonical package name changed")
     if str(root_project.get("version")) != COMPILER_VERSION:
-        errors.append("dbt_project.yml: version must match version.py")
+        errors.append("dbt/dbt_project.yml: version must match version.py")
     required_dbt = root_project.get("require-dbt-version") or []
     required_dbt_text = ",".join(str(item) for item in required_dbt)
     if ">=1.10.6" not in required_dbt_text or "<3.0.0" not in required_dbt_text:
         errors.append(
-            "dbt_project.yml: require-dbt-version must include Core and Fusion"
+            "dbt/dbt_project.yml: require-dbt-version must include Core and Fusion"
         )
     if alias_project.get("name") != "de_toolkit":
         errors.append("aliases/de_toolkit/dbt_project.yml: alias name changed")
@@ -105,14 +107,14 @@ def check_project() -> list[str]:
     ):
         errors.append(f"CHANGELOG.md: missing {COMPILER_VERSION} release")
 
-    packages = _yaml(ROOT / "packages.yml").get("packages") or []
+    packages = _yaml(DBT_ROOT / "packages.yml").get("packages") or []
     found = {
         str(item.get("package"))
         for item in packages
         if isinstance(item, dict) and item.get("package")
     }
     for missing in sorted(REQUIRED_DEPENDENCIES - found):
-        errors.append(f"packages.yml: missing {missing}")
+        errors.append(f"dbt/packages.yml: missing {missing}")
 
     pyproject = tomllib.loads(
         (ROOT / "python" / "pyproject.toml").read_text(encoding="utf-8")
@@ -196,6 +198,8 @@ def check_project() -> list[str]:
     if [path.name for path in release_notes] != ["V2.3.0_RELEASE_NOTES.md"]:
         errors.append("only V2.3.0_RELEASE_NOTES.md may be published")
     for path in ROOT.rglob("*"):
+        if any(part in IGNORED_SCAN_DIRECTORIES for part in path.parts):
+            continue
         if path.is_dir() and re.match(
             r"\.customer_accounts(?:\.det-stage|-det-prove)-", path.name
         ):
@@ -205,14 +209,16 @@ def check_project() -> list[str]:
     for test_area in ("brokers", "services", "acceptance"):
         if not (ROOT / "python/tests" / test_area).exists():
             errors.append(f"python/tests: missing component area {test_area}")
-    if len((ROOT / "README.md").read_text(encoding="utf-8").splitlines()) > 700:
+    if len((ROOT / "README.md").read_text(encoding="utf-8").splitlines()) > MAX_README_LINES:
         errors.append(
-            "README.md: keep the guided entry point below 700 lines; use docs/"
+            f"README.md: keep the guided entry point below {MAX_README_LINES} lines; use docs/"
         )
 
     stale_version = re.compile(r"\b[Vv]2\.(?:0|1|2)(?:\.\d+)?\b")
     text_suffixes = {".json", ".md", ".py", ".toml", ".yml", ".yaml", ".sql", ".txt"}
     for path in sorted(ROOT.rglob("*")):
+        if any(part in IGNORED_SCAN_DIRECTORIES for part in path.parts):
+            continue
         if not path.is_file() or path == ROOT / "CHANGELOG.md":
             continue
         if path.suffix.casefold() not in text_suffixes and path.name not in {

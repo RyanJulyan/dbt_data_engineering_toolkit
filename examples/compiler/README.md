@@ -26,7 +26,7 @@ PYTHONPATH=python/src python3 -m dbt_data_engineering_toolkit_compiler generate 
 Then prove the complete flow:
 
 ```bash
-export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 det prove \
   python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx \
   --project-dir examples/compiler/customer_accounts

@@ -113,7 +113,7 @@ det status contracts/orders.xlsx --project-dir build/orders --prune
 det generate contracts/orders.xlsx --project-dir build/orders --dry-run --prune
 det generate contracts/orders.xlsx --project-dir build/orders --prune
 
-export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 cd build/orders
 dbt deps --profiles-dir .
 cd ../..

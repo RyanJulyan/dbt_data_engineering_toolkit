@@ -89,7 +89,7 @@ configuration, `.sqlfluff`, a project README, and `.det-manifest.json`.
 ## 7. Install dbt packages and check
 
 ```bash
-export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 cd build/orders
 dbt deps --profiles-dir .
 cd ../..

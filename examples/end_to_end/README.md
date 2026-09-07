@@ -14,7 +14,7 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e "../../python"
 
-export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 dbt deps --profiles-dir .
 dbt debug --profiles-dir .
 sqlfluff lint . --config .sqlfluff

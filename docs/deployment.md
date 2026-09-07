@@ -8,19 +8,19 @@ V2.3.0 publishes three related artifacts:
 | short-name companion project | pinned Git subdirectory or separate Hub repository | `de_toolkit.*` |
 | Python compiler | checked wheel and source distribution on PyPI with OIDC provenance | `det` |
 
-Package Hub consumes the repository root. PyPI consumes only `python/`. The release workflow
-publishes both from the same `v2.3.0` tag after the local quality gates pass.
+Package Hub consumes `dbt/`. PyPI consumes only `python/`. The release workflow publishes both
+from the same `v2.3.0` tag after the local quality gates pass.
 
 ## 1. Create the permanent public repository
 
 Use the final public URL before releasing, for example:
 
 ```text
-https://github.com/YOUR_ORG/dbt_data_engineering_toolkit
+https://github.com/systemizing-solutions/dbt_data_engineering_toolkit
 ```
 
-The repository root must retain `dbt_project.yml`, `packages.yml`, `macros/`, `README.md`, and
-`LICENSE`. The root dbt project name must remain `dbt_data_engineering_toolkit`; dbt derives the
+The `dbt/` subfolder must retain `dbt_project.yml`, `packages.yml`, `macros/`, `.sqlfluff`, and
+`.sqlfluffignore`. The dbt project name must remain `dbt_data_engineering_toolkit`; dbt derives the
 macro namespace from that name.
 
 Confirm the release range and dependencies:
@@ -73,7 +73,7 @@ the project or a pending trusted publisher with:
 | Setting | Value |
 | --- | --- |
 | PyPI project | `dbt-data-engineering-toolkit-compiler` |
-| GitHub owner | `YOUR_ORG` |
+| GitHub owner | `systemizing-solutions` |
 | Repository | `dbt_data_engineering_toolkit` |
 | Workflow | `release.yml` |
 | Environment | `pypi` |
@@ -112,10 +112,10 @@ public-API direct execution coverage. Read the exact metric definitions in [test
 Next run the credentialed matrix as a release-candidate preflight and wait for every job to pass:
 
 ```bash
-gh workflow run cloud-integration.yml --repo YOUR_ORG/dbt_data_engineering_toolkit
+gh workflow run cloud-integration.yml --repo systemizing-solutions/dbt_data_engineering_toolkit
 gh run list --workflow cloud-integration.yml --limit 1 \
-  --repo YOUR_ORG/dbt_data_engineering_toolkit
-gh run watch RUN_ID --exit-status --repo YOUR_ORG/dbt_data_engineering_toolkit
+  --repo systemizing-solutions/dbt_data_engineering_toolkit
+gh run watch RUN_ID --exit-status --repo systemizing-solutions/dbt_data_engineering_toolkit
 ```
 
 Do not tag the release if a supported warehouse was skipped. The release workflow runs this
@@ -152,7 +152,7 @@ git init
 git add .
 git commit -m "Release dbt_data_engineering_toolkit v2.3.0"
 git branch -M main
-git remote add origin git@github.com:YOUR_ORG/dbt_data_engineering_toolkit.git
+git remote add origin git@github.com:systemizing-solutions/dbt_data_engineering_toolkit.git
 git push -u origin main
 
 git tag -a v2.3.0 -m "dbt_data_engineering_toolkit v2.3.0"
@@ -168,7 +168,7 @@ Hub.
 Verify both channels:
 
 ```bash
-gh release view v2.3.0 --repo YOUR_ORG/dbt_data_engineering_toolkit
+gh release view v2.3.0 --repo systemizing-solutions/dbt_data_engineering_toolkit
 python -m pip index versions dbt-data-engineering-toolkit-compiler
 ```
 
@@ -180,9 +180,10 @@ In a clean consumer project, create:
 
 ```yaml
 packages:
-  - git: "https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git"
+  - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
     revision: v2.3.0
-  - git: "https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git"
+    subdirectory: dbt
+  - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
     revision: v2.3.0
     subdirectory: aliases/de_toolkit
 ```
@@ -201,19 +202,19 @@ Compile at least one call through each namespace before submitting the package t
 ## 8. Submit the canonical package to dbt Package Hub
 
 Follow the current [Hubcap README](https://github.com/dbt-labs/hubcap): fork Hubcap, add
-`YOUR_ORG/dbt_data_engineering_toolkit` to `hub.json` in sorted order, and open a pull request.
+`systemizing-solutions/dbt_data_engineering_toolkit` to `hub.json` in sorted order, and open a pull request.
 Hubcap discovers semantic GitHub releases and opens the registry-data change used by Package Hub.
 
 ```bash
 gh repo fork dbt-labs/hubcap --clone
 cd hubcap
 git checkout -b add-dbt-data-engineering-toolkit
-# Add YOUR_ORG/dbt_data_engineering_toolkit to hub.json in sorted order.
+# Add systemizing-solutions/dbt_data_engineering_toolkit to hub.json in sorted order.
 git add hub.json
-git commit -m "Add YOUR_ORG/dbt_data_engineering_toolkit"
+git commit -m "Add systemizing-solutions/dbt_data_engineering_toolkit"
 git push -u origin add-dbt-data-engineering-toolkit
 gh pr create --repo dbt-labs/hubcap \
-  --title "Add YOUR_ORG/dbt_data_engineering_toolkit" \
+  --title "Add systemizing-solutions/dbt_data_engineering_toolkit" \
   --body "Adds dbt_data_engineering_toolkit v2.3.0 to dbt Package Hub."
 ```
 
@@ -221,7 +222,7 @@ After Hub ingestion, verify the registry dependency:
 
 ```yaml
 packages:
-  - package: YOUR_ORG/dbt_data_engineering_toolkit
+  - package: systemizing-solutions/dbt_data_engineering_toolkit
     version: 2.3.0
 ```
 

@@ -26,7 +26,7 @@ dbt, Data Contract CLI, SQLFluff, subprocesses, or openpyxl directly.
 | Change staging or atomic publication | `services/generation.py`, `brokers/projects.py` |
 | Add a warehouse | `adapters.py` |
 | Add a command | application use case, then `exposers/cli.py` |
-| Add a public dbt macro | canonical `macros/`, then regenerate the alias facade |
+| Add a public dbt macro | canonical `dbt/macros/`, then regenerate the alias facade |
 
 ## Brokers
 

@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+DBT_ROOT = ROOT / "dbt"
 ALIAS_ROOT = ROOT / "aliases" / "de_toolkit"
 PYTHON_SOURCE = ROOT / "python" / "src"
 if str(PYTHON_SOURCE) not in sys.path:
@@ -13,4 +14,4 @@ if str(PYTHON_SOURCE) not in sys.path:
 
 from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 
-__all__ = ["ALIAS_ROOT", "COMPILER_VERSION", "PYTHON_SOURCE", "ROOT"]
+__all__ = ["ALIAS_ROOT", "COMPILER_VERSION", "DBT_ROOT", "PYTHON_SOURCE", "ROOT"]

@@ -1416,12 +1416,12 @@ The toolkit does not introduce a proprietary execution layer between the enginee
 
 Generated `packages.yml` contains no local filesystem package path.
 
-It installs the canonical root package and, when required, the `aliases/de_toolkit` project from the same published repository revision configured in `DET Build`.
+It installs the canonical `dbt/` package and, when required, the `aliases/de_toolkit` project from the same published repository revision configured in `DET Build`.
 
 Set the repository URL:
 
 ```bash
-export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 ```
 
 Install dbt dependencies:
@@ -1834,18 +1834,19 @@ For only the canonical namespace:
 
 ```yaml
 packages:
-  - git: "https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git"
+  - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
     revision: v2.3.0
+    subdirectory: dbt
 ```
 
 To also install the short `de_toolkit` namespace:
 
 ```yaml
 packages:
-  - git: "https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git"
+  - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
     revision: v2.3.0
 
-  - git: "https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git"
+  - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
     revision: v2.3.0
     subdirectory: aliases/de_toolkit
 ```
@@ -1853,7 +1854,7 @@ packages:
 After the canonical project is listed on Package Hub, consumers may install it using:
 
 ```yaml
-package: YOUR_ORG/dbt_data_engineering_toolkit
+package: systemizing-solutions/dbt_data_engineering_toolkit
 ```
 
 The short:

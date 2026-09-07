@@ -11,6 +11,7 @@ import tomllib
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+DBT_ROOT = ROOT / "dbt"
 PYTHON_SOURCE = ROOT / "python" / "src"
 sys.path.insert(0, str(PYTHON_SOURCE))
 
@@ -21,7 +22,7 @@ def verify_tag(tag: str) -> None:
     expected = f"v{COMPILER_VERSION}"
     if tag != expected:
         raise ValueError(f"release tag is {tag!r}; expected {expected!r}")
-    root = yaml.safe_load((ROOT / "dbt_project.yml").read_text(encoding="utf-8"))
+    root = yaml.safe_load((DBT_ROOT / "dbt_project.yml").read_text(encoding="utf-8"))
     alias = yaml.safe_load(
         (ROOT / "aliases/de_toolkit/dbt_project.yml").read_text(encoding="utf-8")
     )

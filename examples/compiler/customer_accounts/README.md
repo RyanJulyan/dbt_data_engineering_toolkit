@@ -19,7 +19,7 @@ repository. Both entries are pinned to `v2.3.0`; the second entry installs
 the short `de_toolkit` namespace from its subdirectory.
 
 ```bash
-export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 ```
 
 2. Install and lock dbt dependencies:

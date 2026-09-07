@@ -7,7 +7,7 @@
     ".sqlfluff": "15373ee077d89a9e21211bdd73778489365669b45d8412d66c6413a73d575364",
     ".sqlfluffignore": "16e2c1abd5df04cec716b37bebb05e98534be622889a99c18cfb72a53dbea262",
     "Makefile": "14022f027e99b547fd21e14a4c5c0fc9fb0dced3c85456d2682403cc636756a8",
-    "README.md": "0d1c857e5eb7b0b1e462ae42f50371d7050e69d1a9523be7d68e5d975c5d139a",
+    "README.md": "5267e7533564f1821fe15be5bd80451a602a26427a58510f5bf0a2e66c6670ee",
     "contracts/customer_accounts.det.yaml": "f76538ab906e978b60b7cb6c4a1f58504d6b0436d71c96920a0c122f026d85e7",
     "contracts/customer_accounts.odcs.yaml": "4c057a67ccbde7df6a60dc8abad440412f2fcc549ddcdd5ce2c7bfaefcb479f6",
     "dbt_project.yml": "972907bbfde3668dd9fb5290f5f38523e16c797368ba5e8a57dddb1ddf00e9a7",
@@ -18,7 +18,7 @@
     "models/sources.yml": "7cc8fb0559d2b2843318d570d2b958623302ceb1507769ef45b3036dae698c8d",
     "models/staging/stg_customers.sql": "195d7acfcd15fcfd523e5a6b0811525e79ddb2f1e89e9f2f5c139ad32a8f95c3",
     "models/staging/stg_customers.yml": "bac91244e153aa18ea3f7a1b947eed658775d5fba9034c1f1c7d702f2b66349e",
-    "packages.yml": "05336527a37f47be0e596fdb648f08bc864ad71c5cd8aed64d0cc3e54f00cd37",
+    "packages.yml": "90aeb9531bceeceead492808778e172351dcecbfc40602e58d721d599ef9347c",
     "profiles.yml": "b78158bb7db1f27e95b731fe1daff2da4b9919fbe17db2e9e1208611d1f8a715",
     "tests/datacontract_cli/dc_stg_customers__q1__8c7789597d5a.sql": "46131f1fa5ea698a4f03c41b01e4a1ed2f288bdfb85ebcae39b4019c0a1e2483"
   },

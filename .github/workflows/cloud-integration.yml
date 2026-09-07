@@ -123,7 +123,7 @@ jobs:
           python ../scripts/dbt_coverage.py \
             --manifest target/manifest.json \
             --run-results target/run_results.json \
-            --public-api ../macros/schema.yml \
-            --macros-dir ../macros \
+            --public-api ../dbt/macros/schema.yml \
+            --macros-dir ../dbt/macros \
             --minimum 80 \
             --output target/dbt_coverage.json

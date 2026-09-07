@@ -131,7 +131,7 @@ jobs:
           python scripts/dbt_coverage.py
           --manifest integration_tests/target/manifest.json
           --run-results integration_tests/target/run_results.json
-          --public-api macros/schema.yml
+          --public-api dbt/macros/schema.yml
           --minimum 80
           --output integration_tests/target/dbt_coverage.json
       - name: Exercise code generation
@@ -247,8 +247,8 @@ jobs:
           python ../scripts/dbt_coverage.py \
             --manifest target/manifest.json \
             --run-results target/run_results.json \
-            --public-api ../macros/schema.yml \
-            --macros-dir ../macros \
+            --public-api ../dbt/macros/schema.yml \
+            --macros-dir ../dbt/macros \
             --minimum 80 \
             --output target/dbt_coverage.json
       - name: Parse cloud targets with evaluator-safe Fusion settings

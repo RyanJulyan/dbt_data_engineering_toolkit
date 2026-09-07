@@ -38,7 +38,7 @@ repository. Both entries are pinned to `{revision}`; the second entry installs
 the short `de_toolkit` namespace from its subdirectory.
 
 ```bash
-export {git_env}=https://github.com/YOUR_ORG/dbt_data_engineering_toolkit.git
+export {git_env}=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
 ```
 
 2. Install and lock dbt dependencies:

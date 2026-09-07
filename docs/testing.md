@@ -31,13 +31,13 @@ make dbt-coverage
 dbt does not emit Python-style line coverage for Jinja macros. The repository therefore uses two
 auditable metrics implemented by `scripts/dbt_coverage.py`:
 
-1. Discover every macro definition directly from `macros/`.
+1. Discover every macro definition directly from `dbt/macros/`.
 2. Select generic/private macros plus the adapter branch reachable for the manifest target;
    implementations for unrelated adapters are not placed in that target's denominator.
 3. Read successful nodes in `run_results.json` and traverse their manifest macro-dependency graph.
 4. Measure the covered adapter-scoped implementation graph and fail below 80%.
 5. Independently discover every non-private, non-dispatch public facade, require
-   `macros/schema.yml` to document exactly that surface, and count only direct dependencies from
+   `dbt/macros/schema.yml` to document exactly that surface, and count only direct dependencies from
    successful executed nodes. That second metric also fails below 80%.
 6. Write both results to `integration_tests/target/dbt_coverage.json`.
 

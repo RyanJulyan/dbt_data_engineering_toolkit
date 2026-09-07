@@ -5,6 +5,6 @@ max_line_length = 100
 exclude_rules = layout.long_lines
 
 [sqlfluff:templater:dbt]
-project_dir = integration_tests
-profiles_dir = integration_tests
+project_dir = ../integration_tests
+profiles_dir = ../integration_tests
 profile = dbt_data_engineering_toolkit_integration_tests

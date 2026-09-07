@@ -22,6 +22,7 @@ EXCLUDED_DIRECTORIES = {
     ".pytest_cache",
     ".ruff_cache",
     ".venv",
+    "venv",
     "__pycache__",
     "build",
     "dbt_packages",
