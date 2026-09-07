@@ -160,7 +160,7 @@
         <a href="./index.html">Home</a>
         <a href="./dbt/hub.html">dbt Hub</a>
         <a href="./python/index.html">Python Hub</a>
-        <a href="./readme.html?file=./quickstart.md&title=Quickstart">Quickstart</a>
+        <a href="./readme.html?file=docs/quickstart.md&title=Quickstart">Quickstart</a>
         <a href="./dbt/index.html" target="_blank" rel="noopener noreferrer">Generated dbt docs</a>
       </nav>
     </nav>
@@ -173,8 +173,8 @@
 
     <section class="panel">
       <div class="toolbar">
-        <a href="?file=../README.md&title=Repository%20README">Repository README</a>
-        <a href="?file=../python/README.md&title=Python%20README">Python README</a>
+        <a href="?file=https%3A%2F%2Fraw.githubusercontent.com%2Fsystemizing-solutions%2Fdbt_data_engineering_toolkit%2Fmain%2FREADME.md&title=Repository%20README">Repository README</a>
+        <a href="?file=https%3A%2F%2Fraw.githubusercontent.com%2Fsystemizing-solutions%2Fdbt_data_engineering_toolkit%2Fmain%2Fpython%2FREADME.md&title=Python%20README">Python README</a>
       </div>
       <article id="content" class="markdown-body">
         <p class="state">Loading...</p>
@@ -186,7 +186,9 @@
   <script>
     (async function () {
       const params = new URLSearchParams(window.location.search);
-      const file = params.get("file") || "../README.md";
+      const file =
+        params.get("file") ||
+        "https://raw.githubusercontent.com/systemizing-solutions/dbt_data_engineering_toolkit/main/README.md";
       const title = params.get("title") || "README Viewer";
 
       const titleEl = document.getElementById("title");

@@ -37,7 +37,6 @@ from dbt_data_engineering_toolkit_compiler.models import (
     SourceColumn,
     SourceSpecification,
 )
-from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 from dbt_data_engineering_toolkit_compiler.operational import Artifact
 from dbt_data_engineering_toolkit_compiler.registry import OperatorRegistry
 from dbt_data_engineering_toolkit_compiler.services.emissions.service import EmissionService
@@ -51,6 +50,7 @@ from dbt_data_engineering_toolkit_compiler.services.validation.service import (
 from dbt_data_engineering_toolkit_compiler.services.workbooks.service import (
     WorkbookInterpretationService,
 )
+from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION
 
 
 def load_specification(path: Path):

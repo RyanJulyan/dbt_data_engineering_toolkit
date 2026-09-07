@@ -18,7 +18,6 @@ from dbt_data_engineering_toolkit_compiler.brokers.workbook_edits import (
     OpenpyxlWorkbookEditBroker,
 )
 from dbt_data_engineering_toolkit_compiler.errors import SpecificationValidationError
-from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION, WORKBOOK_SCHEMA_VERSION
 from dbt_data_engineering_toolkit_compiler.models import (
     BuildConfiguration,
     ColumnMapping,
@@ -46,6 +45,7 @@ from dbt_data_engineering_toolkit_compiler.services.validation.service import (
 from dbt_data_engineering_toolkit_compiler.services.workbooks.service import (
     WorkbookInterpretationService,
 )
+from dbt_data_engineering_toolkit_compiler.version import COMPILER_VERSION, WORKBOOK_SCHEMA_VERSION
 
 
 def load_specification(path: Path):
