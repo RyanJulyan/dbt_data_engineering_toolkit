@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.2 - 2026-09-07
+
+- Refreshed the release fixtures and example package metadata for the 3.0.2 release.
+- added github pages for docs
+- got the python and dbt code release ready
+- update release fixtures
+
 ## 2.3.0 - 2026-09-06
 
 - Added an enforced 80% Python coverage gate; the release suite covers 85.01% of compiler

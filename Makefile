@@ -42,6 +42,9 @@ compiler-example:
 	PYTHONPATH=python/src python -m dbt_data_engineering_toolkit_compiler validate python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx
 	PYTHONPATH=python/src python -m dbt_data_engineering_toolkit_compiler generate python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx --project-dir examples/compiler/customer_accounts --dry-run --prune
 
+compiler-example-update:
+	./venv/bin/python scripts/update_release_fixtures.py
+
 compiler-proof:
 	PYTHONPATH=python/src python -m dbt_data_engineering_toolkit_compiler check python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx --project-dir examples/compiler/customer_accounts --skip-dbt --skip-sqlfluff
 	PYTHONPATH=python/src python -m dbt_data_engineering_toolkit_compiler prove python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx --project-dir examples/compiler/customer_accounts --local-package-root .
