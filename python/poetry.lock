@@ -784,6 +784,25 @@ uv = ["uv (>=0.1.18)"]
 virtualenv = ["virtualenv (>=20.36.1)"]
 
 [[package]]
+name = "bumpver"
+version = "2026.1132"
+description = "Bump version numbers in project files."
+optional = true
+python-versions = ">=2.7"
+groups = ["main"]
+markers = "extra == \"release\""
+files = [
+    {file = "bumpver-2026.1132-py2.py3-none-any.whl", hash = "sha256:b060170e7ff5d9ad7043a9d3d6288c7175f9c126744d08a2d6ef9b8377f6bd60"},
+    {file = "bumpver-2026.1132.tar.gz", hash = "sha256:80b223c23fca9bc9dd569b7a44680949d34bee23a738860d9a9b36f1abe3b0e0"},
+]
+
+[package.dependencies]
+click = {version = "*", markers = "python_version >= \"3.6\""}
+colorama = ">=0.4"
+lexid = "*"
+toml = "*"
+
+[[package]]
 name = "certifi"
 version = "2025.1.31"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -3352,6 +3371,19 @@ files = [
 
 [package.extras]
 test = ["cssselect (>=0.9.1)", "lxml (>=3.6.0)", "pytest", "pytest-cov"]
+
+[[package]]
+name = "lexid"
+version = "2021.1006"
+description = "Variable width build numbers with lexical ordering."
+optional = true
+python-versions = ">=2.7"
+groups = ["main"]
+markers = "extra == \"release\""
+files = [
+    {file = "lexid-2021.1006-py2.py3-none-any.whl", hash = "sha256:5526bb5606fd74c7add23320da5f02805bddd7c77916f2dc1943e6bada8605ed"},
+    {file = "lexid-2021.1006.tar.gz", hash = "sha256:509a3a4cc926d3dbf22b203b18a4c66c25e6473fb7c0e0d30374533ac28bafe5"},
+]
 
 [[package]]
 name = "lxml"
@@ -6320,6 +6352,19 @@ six = ">=1.13.0"
 thrift = {version = ">=0.10.0", markers = "python_version >= \"3.0\""}
 
 [[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+optional = true
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+groups = ["main"]
+markers = "extra == \"release\""
+files = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
+
+[[package]]
 name = "tomlkit"
 version = "0.15.1"
 description = "Style preserving TOML library"
@@ -6666,7 +6711,7 @@ databricks = ["dbt-databricks"]
 duckdb = ["dbt-duckdb", "duckdb"]
 postgres = ["dbt-postgres"]
 redshift = ["dbt-redshift"]
-release = ["build", "twine"]
+release = ["build", "bumpver", "twine"]
 snowflake = ["dbt-snowflake"]
 spark = ["dbt-spark"]
 test = ["pyright", "pytest", "pytest-cov", "ruff"]
@@ -6674,4 +6719,4 @@ test = ["pyright", "pytest", "pytest-cov", "ruff"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.15"
-content-hash = "398559496c2f80f49e866a3523dccda655cf953e18e0210662eb03bbcd3bae5d"
+content-hash = "a9e760908cc5af538f5f969999580ee84cfc55425f3edb1b0b622328ffca7973"

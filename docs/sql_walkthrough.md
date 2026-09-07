@@ -7,6 +7,7 @@ one SQL expression, keeping the model readable as ordinary SQL and Jinja.
 
 Before Package Hub publication:
 
+{% raw %}
 ```yaml
 packages:
   - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
@@ -15,12 +16,14 @@ packages:
     revision: v2.3.0
     subdirectory: aliases/de_toolkit
 ```
+{% endraw %}
 
 After publication, replace the first entry with the canonical Hub package at `2.3.0`. Keep the
 second Git entry when the short namespace is wanted.
 
 ## 2. Clean columns inline
 
+{% raw %}
 ```sql
 with distinct_source as (
     {{ dbt_data_engineering_toolkit.distinct_rows(ref('raw_customer_events')) }}
@@ -40,6 +43,7 @@ cleaned as (
     from distinct_source
 )
 ```
+{% endraw %}
 
 Alias each call like any selected SQL expression.
 
@@ -47,6 +51,7 @@ Alias each call like any selected SQL expression.
 
 JSON text and Jinja mappings are both supported:
 
+{% raw %}
 ```sql
 {{ dbt_data_engineering_toolkit.mapping(
     expression='status_code',
@@ -57,9 +62,11 @@ JSON text and Jinja mappings are both supported:
     case_sensitive=false
 ) }} as status_label
 ```
+{% endraw %}
 
 Typed numeric output stays numeric:
 
+{% raw %}
 ```sql
 {{ de_toolkit.mapping(
     expression='price_band',
@@ -71,9 +78,11 @@ Typed numeric output stays numeric:
     data_type={'name': 'numeric', 'precision': 18, 'scale': 2}
 ) }} as price_amount
 ```
+{% endraw %}
 
 Formatting a date produces presentation text:
 
+{% raw %}
 ```sql
 {{ de_toolkit.mapping(
     expression='event_code',
@@ -86,9 +95,11 @@ Formatting a date produces presentation text:
     format={'pattern': '%d/%m/%Y'}
 ) }} as event_date_display
 ```
+{% endraw %}
 
 ## 4. Validate visibly
 
+{% raw %}
 ```sql
 validated as (
     select
@@ -101,9 +112,11 @@ validated as (
     from mapped
 )
 ```
+{% endraw %}
 
 Append messages and audit fields in the final projection:
 
+{% raw %}
 ```sql
 select
     *,
@@ -111,6 +124,7 @@ select
     {{ dbt_data_engineering_toolkit.audit_columns('demo_seed') }}
 from validated
 ```
+{% endraw %}
 
 Quarantine models use `accepted_rows(ref(...))` and `rejected_rows(ref(...))`.
 

@@ -62,6 +62,17 @@ Do not add custom files to `.det-manifest.json`.
 8. Update `Toolkit Revision` in consumer workbooks.
 9. Regenerate consumer projects and review their complete diffs.
 
+Version updates are managed by bumpver from `python/pyproject.toml`.
+
+```bash
+cd python
+python -m pip install -e ".[release]"
+bumpver update --patch
+```
+
+Use `--minor` or `--major` when needed. The configured bump updates the Python
+distribution version, compiler version constants, and both dbt package versions,
+then creates and pushes a matching Git tag (`vX.Y.Z`).
 Never point a production workbook at an unpinned branch.
 
 ## Which manifest is which?

@@ -57,6 +57,7 @@ det validate contracts/orders.xlsx
 
 Mappings compile to inline expressions, not a model-level dictionary:
 
+{% raw %}
 ```sql
 select
     {{ dbt_data_engineering_toolkit.clean_string('customer_name') }} as customer_name,
@@ -73,6 +74,7 @@ select
     {{ de_toolkit.is_email('email') }} as _email_valid
 from {{ source('raw', 'customers') }}
 ```
+{% endraw %}
 
 Both namespaces are real dbt packages; no per-model Jinja alias is required.
 
