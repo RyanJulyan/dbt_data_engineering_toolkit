@@ -1,4 +1,4 @@
-# V3.0.6 testing and coverage
+# V3.0.7 testing and coverage
 
 Both codebases have a mandatory 80% release gate. The current release results are:
 
