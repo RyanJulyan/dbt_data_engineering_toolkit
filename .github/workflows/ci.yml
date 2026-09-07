@@ -259,8 +259,7 @@ jobs:
         working-directory: integration_tests
         run: >-
           dbt parse --profiles-dir . --target "${{ matrix.target }}"
-          --static-analysis=off --no-manage-state
-          --vars '{deactivate_for_fusion: true}'
+          --no-manage-state --vars '{deactivate_for_fusion: true}'
 
   deprecations:
     name: dbt deprecations
