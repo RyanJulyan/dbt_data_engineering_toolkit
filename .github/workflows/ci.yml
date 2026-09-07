@@ -215,22 +215,16 @@ jobs:
         include:
           - adapter: duckdb
             target: dev
-            package: dbt-duckdb~=1.11.0
           - adapter: bigquery
             target: bigquery_static
-            package: dbt-bigquery~=1.11.0
           - adapter: databricks
             target: databricks
-            package: dbt-databricks~=1.11.0
           - adapter: redshift
             target: redshift
-            package: dbt-redshift~=1.11.0
           - adapter: snowflake
             target: snowflake
-            package: dbt-snowflake~=1.11.0
           - adapter: spark
             target: spark
-            package: dbt-spark[PyHive]~=1.11.0
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -238,9 +232,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install dbt Fusion
-        run: |
-          python -m pip install --pre "dbt>=2.0.0,<3.0.0"
-          python -m pip install "${{ matrix.package }}"
+        run: python -m pip install --pre "dbt>=2.0.0rc0,<3.0.0"
       - name: Resolve dbt package dependencies
         working-directory: integration_tests
         run: dbt deps --profiles-dir . --target "${{ matrix.target }}"

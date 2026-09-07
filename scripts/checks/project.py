@@ -73,6 +73,13 @@ def _yaml(path: Path) -> dict[str, object]:
     return payload if isinstance(payload, dict) else {}
 
 
+def _normalized_license_terms(path: Path) -> str:
+    """Return normalized MIT terms while ignoring copyright holder lines."""
+    lines = path.read_text(encoding="utf-8").replace("\r\n", "\n").split("\n")
+    kept = [line.rstrip() for line in lines if not line.startswith("Copyright (c) ")]
+    return "\n".join(kept).strip()
+
+
 def check_project() -> list[str]:
     errors: list[str] = []
     root_project = _yaml(DBT_ROOT / "dbt_project.yml")
@@ -130,8 +137,12 @@ def check_project() -> list[str]:
         )
     if project.get("license-files") != ["LICENSE"]:
         errors.append("python/pyproject.toml: Python distribution must include LICENSE")
-    if (ROOT / "LICENSE").read_bytes() != (ROOT / "python/LICENSE").read_bytes():
-        errors.append("python/LICENSE: must exactly match the repository LICENSE")
+    root_license_terms = _normalized_license_terms(ROOT / "LICENSE")
+    python_license_terms = _normalized_license_terms(ROOT / "python/LICENSE")
+    if root_license_terms != python_license_terms:
+        errors.append(
+            "python/LICENSE: MIT terms must match the repository LICENSE (copyright holder text may differ)"
+        )
     dependency_names = {
         str(item).split("<", 1)[0].split(">", 1)[0].split("=", 1)[0].split("[", 1)[0]
         for item in project.get("dependencies") or []

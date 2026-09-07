@@ -92,7 +92,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install dbt Fusion
-        run: python -m pip install --pre "dbt>=2.0.0,<3.0.0"
+        run: python -m pip install --pre "dbt>=2.0.0rc0,<3.0.0"
       - name: Build integration suite against Spark
         working-directory: integration_tests
         run: bash ../scripts/run_fusion_integration.sh spark
