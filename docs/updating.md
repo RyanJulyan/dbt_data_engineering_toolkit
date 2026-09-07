@@ -1,4 +1,4 @@
-# Updating a V3.2.0 product safely
+# Updating a V4.0.0 product safely
 
 There are two authoritative edit paths: workbook changes and toolkit-source changes. Generated
 files are outputs in both cases.
@@ -18,7 +18,7 @@ det prove contracts/orders.xlsx --project-dir build/orders
 ```
 
 Refresh is needed after manually adding/renaming models, fields, source relations, inputs, or
-lookups so contextual dropdowns are rebuilt. It accepts the v3.2.0 workbook schema only.
+lookups so contextual dropdowns are rebuilt. It accepts the v4.0.0 workbook schema only.
 
 ## External schema changed
 
