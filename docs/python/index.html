@@ -5,36 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Python Docs Hub | Data Engineering Toolkit</title>
   <meta name="description" content="Documentation hub for the Python compiler and det CLI in dbt_data_engineering_toolkit." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f4f1e9;
-      --ink: #1f2429;
-      --muted: #5d6570;
-      --edge: #d8d1c4;
-      --brand: #1f8f5f;
-      --brand-ink: #0f4d33;
-      --brand-soft: #dff4ea;
+      --bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --primary: #2b7de9;
+      --primary-dark: #0f2744;
       --radius: 18px;
-      --shadow: 0 16px 38px rgba(24, 35, 28, 0.12);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Manrope", "Segoe UI", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(900px 500px at -10% 12%, rgba(246, 184, 51, 0.17), transparent 60%),
-        linear-gradient(180deg, #f8f6f0 0%, var(--bg) 52%, #efeade 100%);
-      min-height: 100vh;
+      font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
     }
 
     .wrap {
-      width: min(980px, calc(100% - 2rem));
+      width: min(1000px, calc(100% - 2rem));
       margin: 1rem auto 2rem;
     }
 
@@ -43,65 +36,100 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 0.45rem;
-      border: 1px solid var(--edge);
+      border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(4px);
-      padding: 0.65rem 0.95rem;
+      background: rgba(255, 255, 255, 0.97);
+      padding: 0.6rem 0.9rem;
+      position: sticky;
+      top: 12px;
     }
 
     .top a {
       text-decoration: none;
-      color: var(--ink);
-      font-weight: 700;
+      color: var(--text);
+      font-weight: 600;
       font-size: 0.9rem;
-      padding: 0.28rem 0.58rem;
       border-radius: 999px;
+      border: 1.5px solid transparent;
+      padding: 0.34rem 0.68rem;
     }
 
-    .top a:hover { background: var(--brand-soft); color: var(--brand-ink); }
+    .top a:hover {
+      color: var(--primary);
+      border-color: rgba(43, 125, 233, 0.35);
+      background: rgba(43, 125, 233, 0.08);
+    }
 
-    .hero,
-    .card {
+    .hero {
       margin-top: 1rem;
-      border: 1px solid var(--edge);
-      border-radius: var(--radius);
-      background: #fff;
-      box-shadow: var(--shadow);
-      padding: clamp(1rem, 2.8vw, 1.8rem);
-      animation: rise 0.65s ease both;
+      border-radius: 26px;
+      border: 1px solid #194b84;
+      padding: clamp(1rem, 3vw, 1.9rem);
+      background:
+        radial-gradient(1000px 520px at 94% 12%, rgba(125, 185, 245, 0.2), transparent 50%),
+        linear-gradient(145deg, #0f2744 10%, #123a66 56%, #1b518c 100%);
+      color: #fff;
+      box-shadow: 0 24px 48px rgba(15, 39, 68, 0.24);
     }
 
     .eyebrow {
-      font-family: "Archivo", sans-serif;
+      font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      font-size: 0.75rem;
-      color: var(--brand-ink);
-      display: inline-block;
-      border: 1px solid #b9cfbe;
+      font-weight: 700;
       border-radius: 999px;
-      background: var(--brand-soft);
-      padding: 0.28rem 0.52rem;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.1);
+      display: inline-block;
+      padding: 0.3rem 0.56rem;
     }
 
     h1, h2 {
-      font-family: "Archivo", sans-serif;
-      letter-spacing: -0.01em;
       margin: 0.6rem 0;
-      line-height: 1.08;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
     }
 
-    h1 { font-size: clamp(1.75rem, 4.8vw, 2.8rem); }
-    h2 { font-size: clamp(1.2rem, 2.2vw, 1.6rem); }
+    h1 { font-size: clamp(1.7rem, 4.5vw, 2.65rem); }
+    h2 { font-size: clamp(1.2rem, 2.2vw, 1.5rem); color: var(--primary-dark); }
 
-    p { color: var(--muted); margin: 0; line-height: 1.58; }
+    p { margin: 0; color: rgba(255, 255, 255, 0.85); }
+
+    .pill-row {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.38rem;
+    }
+
+    .pill {
+      border: 1.5px solid rgba(148, 197, 255, 0.45);
+      border-radius: 999px;
+      color: #dcebff;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 0.79rem;
+      padding: 0.29rem 0.52rem;
+      font-weight: 700;
+    }
 
     .grid {
+      margin-top: 1rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      margin-top: 1rem;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(15, 39, 68, 0.06);
+      padding: 1rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
     }
 
     ul {
@@ -113,35 +141,13 @@
     li { margin: 0.42rem 0; }
 
     a {
-      color: var(--brand-ink);
+      color: var(--primary);
       text-decoration: none;
-      border-bottom: 1px dashed #9fc6b3;
+      border-bottom: 1px solid rgba(43, 125, 233, 0.25);
       font-weight: 600;
     }
 
-    a:hover { color: var(--brand); border-bottom-style: solid; }
-
-    .pill-row {
-      margin-top: 0.85rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-    }
-
-    .pill {
-      border: 1px solid #eadfbf;
-      border-radius: 999px;
-      background: #fffaf0;
-      padding: 0.35rem 0.6rem;
-      color: #755f2d;
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    a:hover { border-bottom-color: var(--primary); }
 
     @media (max-width: 860px) {
       .grid { grid-template-columns: 1fr; }
@@ -161,8 +167,8 @@
       <span class="eyebrow">Python Documentation Hub</span>
       <h1>Compiler And CLI For Controlled Workbook-To-dbt Generation</h1>
       <p>
-        The Python package exposes the det CLI to build, validate, synchronize, generate,
-        check, and prove end-to-end dbt data products from controlled workbook or ODCS inputs.
+        The det CLI builds, validates, synchronizes, and verifies generated data-product assets,
+        connecting definition intent to repeatable dbt delivery.
       </p>
       <div class="pill-row" aria-label="python capabilities">
         <span class="pill">workbook build</span>
@@ -175,7 +181,7 @@
 
     <section class="grid" aria-label="python docs links">
       <article class="card">
-        <span class="eyebrow">Package Docs</span>
+        <span class="eyebrow" style="color:#2b7de9;border-color:rgba(43,125,233,.35);background:rgba(43,125,233,.08)">Package Docs</span>
         <h2>CLI And Workflow Guidance</h2>
         <ul>
           <li><a href="../cli.md">Command-line reference</a></li>
@@ -187,7 +193,7 @@
       </article>
 
       <article class="card">
-        <span class="eyebrow">Quality</span>
+        <span class="eyebrow" style="color:#2b7de9;border-color:rgba(43,125,233,.35);background:rgba(43,125,233,.08)">Quality</span>
         <h2>Validation And Testing</h2>
         <ul>
           <li><a href="../testing.md">Testing strategy</a></li>

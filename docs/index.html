@@ -5,282 +5,274 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Data Engineering Toolkit Docs</title>
   <meta name="description" content="Central documentation index for dbt_data_engineering_toolkit with dbt and python hubs." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f4f1e9;
-      --ink: #1f2429;
-      --muted: #5d6570;
-      --edge: #d8d1c4;
-      --brand: #1f8f5f;
-      --brand-ink: #0f4d33;
-      --brand-soft: #dff4ea;
-      --accent: #f6b833;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --shadow: 0 18px 45px rgba(24, 35, 28, 0.12);
+      --bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --primary: #2b7de9;
+      --primary-dark: #0f2744;
+      --card: #f8fafc;
+      --radius: 18px;
+      --radius-sm: 12px;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Manrope", "Segoe UI", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(1000px 600px at 92% -8%, rgba(31, 143, 95, 0.14), transparent 60%),
-        radial-gradient(900px 700px at -12% 20%, rgba(246, 184, 51, 0.16), transparent 55%),
-        linear-gradient(180deg, #f8f6f0 0%, var(--bg) 50%, #efeade 100%);
-      min-height: 100vh;
-      line-height: 1.5;
-    }
-
-    .grain {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.25;
-      background-image:
-        linear-gradient(45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%);
-      background-size: 7px 7px;
-      z-index: 0;
+      font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
     }
 
     .shell {
-      width: min(1120px, calc(100% - 2rem));
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
+      width: min(1100px, calc(100% - 2rem));
+      margin: 1rem auto 2.5rem;
     }
 
     .topbar {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 1rem;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--edge);
+      justify-content: space-between;
+      gap: 0.8rem;
+      border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(4px);
+      background: rgba(255, 255, 255, 0.97);
+      padding: 0.6rem 0.9rem;
+      backdrop-filter: blur(6px);
     }
 
     .brand {
-      font-family: "Archivo", sans-serif;
       font-weight: 800;
-      font-size: 0.95rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--primary-dark);
+      white-space: nowrap;
     }
 
     .topbar nav {
       display: flex;
-      gap: 0.4rem;
+      gap: 0.45rem;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .topbar a {
-      color: var(--ink);
       text-decoration: none;
-      padding: 0.35rem 0.65rem;
-      border-radius: 999px;
-      font-weight: 600;
       font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      border: 1.5px solid transparent;
+      border-radius: 999px;
+      padding: 0.34rem 0.7rem;
     }
 
     .topbar a:hover {
-      background: var(--brand-soft);
-      color: var(--brand-ink);
+      color: var(--primary);
+      border-color: rgba(43, 125, 233, 0.35);
+      background: rgba(43, 125, 233, 0.08);
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 1rem;
       margin-top: 1rem;
-    }
-
-    .hero-panel {
-      border: 1px solid var(--edge);
-      border-radius: var(--radius-lg);
-      background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(250, 245, 233, 0.85));
-      box-shadow: var(--shadow);
-      padding: clamp(1.2rem, 3vw, 2.5rem);
-      animation: rise 0.65s ease both;
+      border-radius: 28px;
+      border: 1px solid #194b84;
+      padding: clamp(1.2rem, 4vw, 2.6rem);
+      background:
+        radial-gradient(1200px 600px at 8% 14%, rgba(91, 169, 255, 0.2), transparent 50%),
+        radial-gradient(840px 420px at 88% 100%, rgba(125, 185, 245, 0.25), transparent 50%),
+        linear-gradient(150deg, #0f2744 8%, #123a66 48%, #1a4e86 100%);
+      color: #ffffff;
+      box-shadow: 0 26px 55px rgba(15, 39, 68, 0.25);
     }
 
     .eyebrow {
       display: inline-block;
-      font-family: "Archivo", sans-serif;
-      font-size: 0.76rem;
-      letter-spacing: 0.08em;
+      font-size: 0.75rem;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      border: 1px solid #b9cfbe;
       border-radius: 999px;
-      padding: 0.3rem 0.58rem;
-      color: var(--brand-ink);
-      background: var(--brand-soft);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.56rem;
+      font-weight: 700;
     }
 
     h1 {
-      font-family: "Archivo", sans-serif;
-      margin: 0.75rem 0;
-      font-size: clamp(1.9rem, 5vw, 3.3rem);
-      line-height: 1.03;
-      letter-spacing: -0.01em;
+      margin: 0.7rem 0 0.8rem;
+      font-size: clamp(1.9rem, 5vw, 3.15rem);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      max-width: 18ch;
     }
 
     .hero p {
       margin: 0;
-      color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 56ch;
+      color: rgba(255, 255, 255, 0.86);
+      max-width: 62ch;
+      font-size: 1.02rem;
     }
 
     .hero-actions {
       margin-top: 1.2rem;
       display: flex;
-      gap: 0.6rem;
+      gap: 0.55rem;
       flex-wrap: wrap;
     }
 
     .btn {
-      border-radius: 999px;
       text-decoration: none;
+      border-radius: 999px;
+      padding: 0.62rem 1rem;
+      font-size: 0.92rem;
       font-weight: 700;
-      font-size: 0.93rem;
-      padding: 0.68rem 0.98rem;
-      border: 1px solid transparent;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
+      border: 1.5px solid transparent;
+      transition: all 0.16s ease;
     }
 
-    .btn:hover { transform: translateY(-2px); }
-
     .btn-primary {
-      background: var(--brand);
-      color: #fff;
-      box-shadow: 0 10px 20px rgba(31, 143, 95, 0.35);
+      background: #ffffff;
+      color: #0f2744;
+      border-color: #ffffff;
     }
 
     .btn-secondary {
-      color: var(--brand-ink);
-      border-color: #a5c8b4;
-      background: #f3fbf7;
+      color: #dcebff;
+      border-color: rgba(148, 197, 255, 0.45);
+      background: rgba(255, 255, 255, 0.06);
     }
 
-    .snapshot {
-      border: 1px solid var(--edge);
-      border-radius: var(--radius-lg);
-      padding: 1rem;
-      background: #fff;
-      animation: rise 0.85s ease both;
-    }
-
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.7rem;
-      margin-top: 0.7rem;
-    }
-
-    .metric {
-      border: 1px solid #e8e2d5;
-      border-radius: 12px;
-      padding: 0.7rem;
-      background: linear-gradient(180deg, #fff, #faf7f0);
-    }
-
-    .metric strong {
-      display: block;
-      font-family: "Archivo", sans-serif;
-      font-size: 1.18rem;
-      margin-bottom: 0.15rem;
-    }
-
-    .metric span {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
+    .btn:hover { transform: translateY(-1px); }
 
     .sections {
-      margin: 1rem 0 2rem;
+      margin-top: 1rem;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
     }
 
-    .section-card {
-      border: 1px solid var(--edge);
-      border-radius: var(--radius-md);
-      background: #fff;
-      padding: 1.1rem;
-      box-shadow: 0 10px 30px rgba(36, 43, 30, 0.08);
-      animation: rise 1s ease both;
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem;
+      background: #ffffff;
+      box-shadow: 0 10px 28px rgba(15, 39, 68, 0.06);
     }
 
-    .section-card h2 {
-      margin: 0.35rem 0 0.45rem;
-      font-family: "Archivo", sans-serif;
-      font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+    .card h2 {
+      margin: 0.45rem 0;
+      font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+      letter-spacing: -0.01em;
+      color: #0f2744;
     }
 
-    .section-card p {
+    .card p {
       margin: 0;
       color: var(--muted);
     }
 
-    .link-list {
+    .pill-row {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .pill {
+      border: 1.5px solid rgba(43, 125, 233, 0.35);
+      border-radius: 999px;
+      color: #2b7de9;
+      background: rgba(43, 125, 233, 0.08);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.3rem 0.55rem;
+    }
+
+    .links {
       list-style: none;
-      margin: 0.9rem 0 0;
+      margin: 0.8rem 0 0;
       padding: 0;
       display: grid;
       gap: 0.45rem;
     }
 
-    .link-list a {
-      color: var(--brand-ink);
+    .links a {
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
-      border-bottom: 1px dashed #a4cdb8;
-      width: fit-content;
+      border-bottom: 1px solid rgba(43, 125, 233, 0.25);
     }
 
-    .link-list a:hover {
-      color: var(--brand);
-      border-bottom-style: solid;
+    .links a:hover { border-bottom-color: var(--primary); }
+
+    .steps {
+      margin-top: 1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 1rem;
     }
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+    .steps h3 {
+      margin: 0 0 0.65rem;
+      color: var(--primary-dark);
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.55rem;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      padding: 0.72rem;
+    }
+
+    .step small {
+      display: block;
+      color: var(--primary);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 0.95rem;
+      color: #0f2744;
+      margin-bottom: 0.2rem;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 0.86rem;
     }
 
     @media (max-width: 980px) {
-      .hero { grid-template-columns: 1fr; }
       .sections { grid-template-columns: 1fr; }
+      .step-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
-    @media (max-width: 620px) {
-      .topbar {
-        border-radius: 18px;
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 0.45rem;
-      }
-
-      .metric-grid { grid-template-columns: 1fr; }
+    @media (max-width: 650px) {
+      .topbar { border-radius: 16px; align-items: flex-start; flex-direction: column; }
+      .step-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="shell">
+  <main class="shell">
     <header class="topbar">
       <div class="brand">Data Engineering Toolkit</div>
       <nav aria-label="Primary">
@@ -292,72 +284,80 @@
     </header>
 
     <section class="hero">
-      <article class="hero-panel">
-        <span class="eyebrow">Project Documentation</span>
-        <h1>A Shared Path From Data Product Intent To Validated dbt Delivery</h1>
-        <p>
-          This repository combines a reusable dbt package and a Python compiler/CLI so teams can define,
-          validate, and generate readable dbt data products from controlled specifications.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="./dbt/hub.html">Open dbt Hub</a>
-          <a class="btn btn-secondary" href="./python/index.html">Open Python Hub</a>
-          <a class="btn btn-secondary" href="./cli.md">CLI Docs</a>
-        </div>
-      </article>
-
-      <aside class="snapshot" aria-label="Project Snapshot">
-        <span class="eyebrow">At A Glance</span>
-        <div class="metric-grid">
-          <div class="metric">
-            <strong>2 Core Parts</strong>
-            <span>Reusable dbt package + Python compiler and CLI.</span>
-          </div>
-          <div class="metric">
-            <strong>V2.3.0</strong>
-            <span>Current release with validation and generation improvements.</span>
-          </div>
-          <div class="metric">
-            <strong>SQL-First API</strong>
-            <span>Inline macros keep transformation intent readable in-model.</span>
-          </div>
-          <div class="metric">
-            <strong>Adapter Coverage</strong>
-            <span>Supports dbt Core plus Fusion-compatible workflows.</span>
-          </div>
-        </div>
-      </aside>
+      <span class="eyebrow">Project Documentation</span>
+      <h1>Protect Data Product Quality Before Delivery Ends</h1>
+      <p>
+        One connected toolkit across dbt and Python: define transformation intent,
+        validate assumptions, generate repeatable outputs, and keep project delivery aligned.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="./dbt/hub.html">Open dbt Hub</a>
+        <a class="btn btn-secondary" href="./python/index.html">Open Python Hub</a>
+        <a class="btn btn-secondary" href="./cli.md">CLI Docs</a>
+      </div>
     </section>
 
     <section class="sections" aria-label="Documentation Hubs">
-      <article class="section-card">
-        <span class="eyebrow">dbt Component</span>
+      <article class="card">
+        <span class="eyebrow" style="color:#2b7de9;border-color:rgba(43,125,233,.35);background:rgba(43,125,233,.08)">dbt Component</span>
         <h2>Reusable dbt Package</h2>
-        <p>
-          Macro-driven cleaning, formatting, validation, assertion, and transformation vocabulary for consistent,
-          reviewable engineering across projects.
-        </p>
-        <ul class="link-list">
+        <p>Macro-first SQL API for cleaning, validation, assertion, and transformation with readable model logic.</p>
+        <div class="pill-row">
+          <span class="pill">clean</span>
+          <span class="pill">format</span>
+          <span class="pill">validate</span>
+          <span class="pill">assert</span>
+        </div>
+        <ul class="links">
           <li><a href="./dbt/hub.html">Open dbt docs hub</a></li>
           <li><a href="./sql_walkthrough.md">SQL walkthrough</a></li>
           <li><a href="./testing.md">Testing guidance</a></li>
         </ul>
       </article>
 
-      <article class="section-card">
-        <span class="eyebrow">Python Component</span>
+      <article class="card">
+        <span class="eyebrow" style="color:#2b7de9;border-color:rgba(43,125,233,.35);background:rgba(43,125,233,.08)">Python Component</span>
         <h2>Compiler + det CLI</h2>
-        <p>
-          Validates controlled workbook inputs, syncs contracts, and emits complete dbt projects with supporting
-          artifacts and proof tooling.
-        </p>
-        <ul class="link-list">
+        <p>Controlled workbook-to-dbt generation with validation, sync, check, and prove workflows.</p>
+        <div class="pill-row">
+          <span class="pill">build</span>
+          <span class="pill">validate</span>
+          <span class="pill">generate</span>
+          <span class="pill">check/prove</span>
+        </div>
+        <ul class="links">
           <li><a href="./python/index.html">Open python docs hub</a></li>
           <li><a href="./cli.md">CLI documentation</a></li>
           <li><a href="./deployment.md">Deployment guidance</a></li>
         </ul>
       </article>
     </section>
-  </div>
+
+    <section class="steps" aria-label="Project Workflow">
+      <h3>How It Works</h3>
+      <div class="step-grid">
+        <div class="step">
+          <small>Step 01</small>
+          <strong>Define Product</strong>
+          <span>Capture schema, ownership, grain, and source mappings.</span>
+        </div>
+        <div class="step">
+          <small>Step 02</small>
+          <strong>Validate Inputs</strong>
+          <span>Run semantic checks and workbook consistency validation.</span>
+        </div>
+        <div class="step">
+          <small>Step 03</small>
+          <strong>Generate dbt</strong>
+          <span>Emit models, YAML, tests, and supporting artifacts.</span>
+        </div>
+        <div class="step">
+          <small>Step 04</small>
+          <strong>Verify Delivery</strong>
+          <span>Use checks and proof workflows to confirm outcomes.</span>
+        </div>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
