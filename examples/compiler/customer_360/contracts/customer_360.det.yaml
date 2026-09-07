@@ -392,6 +392,6 @@ spec:
     profile: customer_360
     target_schema: main
     toolkit_git_env: DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL
-    toolkit_revision: v2.3.0
+    toolkit_revision: v3.0.5
     allow_many_to_many: false
     contract_test_authority: datacontract

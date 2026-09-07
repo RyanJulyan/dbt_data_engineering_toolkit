@@ -7,8 +7,8 @@
     ".sqlfluff": "7675f06de098b399fbdf25d6bdf7316c062b016f2523365a56e7676626f99800",
     ".sqlfluffignore": "16e2c1abd5df04cec716b37bebb05e98534be622889a99c18cfb72a53dbea262",
     "Makefile": "14022f027e99b547fd21e14a4c5c0fc9fb0dced3c85456d2682403cc636756a8",
-    "README.md": "9cf4a8ed32dddf43fe926ff2581b4e115fac235b47f4b8b4b2d183fabcd8d90c",
-    "contracts/customer_360.det.yaml": "84f4f72c1aaf4a04124723fd545003139e4aa7d43a59107572bb5fe44fb52113",
+    "README.md": "29627ad4268e082c759abf6abcfcadc95c28a3c75c62e5a1aeeafce6624bb64a",
+    "contracts/customer_360.det.yaml": "73d26389232f801d10f99444d2b3a5ee6e5c0847d079d9853b0bc78bfd25c3f7",
     "contracts/customer_360.odcs.yaml": "df9018e1d247ce9a2996e3ae379136fc11ff3e9a08cd0f4243c9fe0ab7c3fa74",
     "dbt_project.yml": "d7297e553709814e6d4f0653e506e22bae55f9900027c655024ffe61fe04f8e0",
     "models/quarantine/stg_customers_rejected.sql": "3b9c09c423df5338b0a9ccfcf6885cef349b92599f1a20fea464a1a9bc4d269a",
@@ -16,7 +16,7 @@
     "models/sources.yml": "e667e3b63abaa8b9e56e71c27be1d3cce7a0e23b7a0260694eaea2dd1ac867f4",
     "models/staging/stg_customers.sql": "6059c96a7de3336c7b95d55f42ce3b50af2c5a431a81738a49d4265fd9371409",
     "models/staging/stg_customers.yml": "9390ee9212ecc4eccb85f8a406c356a4c188548b3dcf43a82f93f3cd2a45faf1",
-    "packages.yml": "fae5d6f1d264e47c5d75464949ed104e6003d6d8ffbaa1d1424671c8d3f09450",
+    "packages.yml": "5b2523664327fa0ea8c2bf423ae2ec73de53ae00a23c5dddbfe33c6d871ea8e8",
     "profiles.yml": "6032ba3413ea33154dcd3a4fb11b8cb8f21770578118df05f0e66cfb7c2d6d9a",
     "tests/datacontract_cli/dc_stg_customers__the_published_cus__46e04bf08462.sql": "64484679bf79e0eec4591b50928a30bece72e486b60aa92a9ead2e33589a3892"
   },
@@ -45,5 +45,5 @@
   "odcs_version": "3.1.0",
   "operator_registry_sha256": "80864bd3c138d9b186867baa0b5789dbe2f5aecacac3e1882fb0214611f059c6",
   "workbook_schema_version": "3.0.5",
-  "workbook_sha256": "f2c5499833e8bf4dc8389598ec1d062a6afbd61694bee03e1e31339fbf9dcbfc"
+  "workbook_sha256": "1cef337e5a27246c5470232659e691a876b8f18453293a67b7637c7b60fc678c"
 }

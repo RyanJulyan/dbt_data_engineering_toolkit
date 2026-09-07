@@ -22,6 +22,7 @@ WORKBOOKS = (
 )
 RELEASE_OUTPUTS = [
     *WORKBOOKS,
+    ROOT / "CHANGELOG.md",
     ROOT / "examples/compiler/customer_360",
     ROOT / "examples/compiler/customer_accounts",
 ]
@@ -33,9 +34,28 @@ def update_workbook_template_version(path: Path) -> None:
         if "_DET Metadata" not in workbook.sheetnames:
             raise ValueError(f"Workbook is missing _DET Metadata: {path}")
         workbook["_DET Metadata"]["B4"] = COMPILER_VERSION
+        if "DET Build" in workbook.sheetnames:
+            workbook["DET Build"]["B8"] = f"v{COMPILER_VERSION}"
         workbook.save(path)
     finally:
         workbook.close()
+
+
+def update_changelog() -> None:
+    changelog = ROOT / "CHANGELOG.md"
+    text = changelog.read_text(encoding="utf-8")
+    heading = f"## {COMPILER_VERSION} - 2026-09-07"
+    if heading in text:
+        return
+    entry = (
+        f"{heading}\n\n"
+        f"- Refreshed the release fixtures and example package metadata for the {COMPILER_VERSION} release.\n\n"
+    )
+    if text.startswith("# Changelog\n\n"):
+        text = "# Changelog\n\n" + entry + text[len("# Changelog\n\n"):]
+    else:
+        text = f"# Changelog\n\n{entry}{text.lstrip()}"
+    changelog.write_text(text, encoding="utf-8")
 
 
 def run_command(args: list[str]) -> None:
@@ -65,6 +85,7 @@ def stage_release_outputs() -> None:
 
 
 def main() -> int:
+    update_changelog()
     for workbook_path in WORKBOOKS:
         update_workbook_template_version(workbook_path)
     run_command(
