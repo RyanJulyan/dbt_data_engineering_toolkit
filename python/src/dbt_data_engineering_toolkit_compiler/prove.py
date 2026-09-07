@@ -151,10 +151,17 @@ class ProjectProofService:
         return run(project, selector=EVALUATOR_SELECTOR)
 
     def _use_local_packages(self, project: Path, package_root: Path) -> None:
+        root = package_root.resolve()
+        canonical = root / "dbt" if (root / "dbt" / "dbt_project.yml").exists() else root
+        alias = (
+            root / "aliases" / "de_toolkit"
+            if (root / "aliases" / "de_toolkit" / "dbt_project.yml").exists()
+            else root / "aliases" / "de_toolkit"
+        )
         payload = {
             "packages": [
-                {"local": str(package_root)},
-                {"local": str(package_root / "aliases" / "de_toolkit")},
+                {"local": str(canonical)},
+                {"local": str(alias)},
             ]
         }
         self.files.write_text_atomic(
