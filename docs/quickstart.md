@@ -1,4 +1,4 @@
-# V3.0.7 quickstart
+# V3.1.0 quickstart
 
 This creates a blank product, imports a schema, maps it, and produces a checked dbt project.
 
