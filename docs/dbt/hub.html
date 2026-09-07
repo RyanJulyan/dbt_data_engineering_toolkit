@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>dbt Docs Hub | Data Engineering Toolkit</title>
+  <meta name="description" content="Documentation hub for the dbt package in dbt_data_engineering_toolkit." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f1e9;
+      --ink: #1f2429;
+      --muted: #5d6570;
+      --edge: #d8d1c4;
+      --brand: #1f8f5f;
+      --brand-ink: #0f4d33;
+      --brand-soft: #dff4ea;
+      --radius: 18px;
+      --shadow: 0 16px 38px rgba(24, 35, 28, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(840px 440px at 88% -10%, rgba(31, 143, 95, 0.16), transparent 62%),
+        linear-gradient(180deg, #f8f6f0 0%, var(--bg) 52%, #efeade 100%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(980px, calc(100% - 2rem));
+      margin: 1rem auto 2rem;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      border: 1px solid var(--edge);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(4px);
+      padding: 0.65rem 0.95rem;
+    }
+
+    .top a {
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.28rem 0.58rem;
+      border-radius: 999px;
+    }
+
+    .top a:hover { background: var(--brand-soft); color: var(--brand-ink); }
+
+    .hero,
+    .card {
+      margin-top: 1rem;
+      border: 1px solid var(--edge);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: clamp(1rem, 2.8vw, 1.8rem);
+      animation: rise 0.65s ease both;
+    }
+
+    .eyebrow {
+      font-family: "Archivo", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.75rem;
+      color: var(--brand-ink);
+      display: inline-block;
+      border: 1px solid #b9cfbe;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      padding: 0.28rem 0.52rem;
+    }
+
+    h1, h2 {
+      font-family: "Archivo", sans-serif;
+      letter-spacing: -0.01em;
+      margin: 0.6rem 0;
+      line-height: 1.08;
+    }
+
+    h1 { font-size: clamp(1.75rem, 4.8vw, 2.8rem); }
+    h2 { font-size: clamp(1.2rem, 2.2vw, 1.6rem); }
+
+    p { color: var(--muted); margin: 0; line-height: 1.58; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    ul {
+      margin: 0.7rem 0 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+
+    li { margin: 0.42rem 0; }
+
+    a {
+      color: var(--brand-ink);
+      text-decoration: none;
+      border-bottom: 1px dashed #9fc6b3;
+      font-weight: 600;
+    }
+
+    a:hover { color: var(--brand); border-bottom-style: solid; }
+
+    .pill-row {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .pill {
+      border: 1px solid #d9e6df;
+      border-radius: 999px;
+      background: #f6fcf9;
+      padding: 0.35rem 0.6rem;
+      color: #2f6351;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="top" aria-label="Hub Navigation">
+      <a href="../index.html">Project Home</a>
+      <a href="../python/index.html">Python Hub</a>
+      <a href="../quickstart.md">Quickstart</a>
+      <a href="./index.html">Generated dbt docs</a>
+    </nav>
+
+    <section class="hero">
+      <span class="eyebrow">dbt Documentation Hub</span>
+      <h1>Reusable Macros For Readable, Testable Data Engineering SQL</h1>
+      <p>
+        The dbt package provides an inline SQL expression API for cleaning, standardizing,
+        mapping, validating, and asserting data while keeping logic visible in-model.
+      </p>
+      <div class="pill-row" aria-label="dbt macro areas">
+        <span class="pill">clean</span>
+        <span class="pill">format</span>
+        <span class="pill">validate</span>
+        <span class="pill">assert</span>
+        <span class="pill">transform</span>
+        <span class="pill">govern</span>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="dbt docs links">
+      <article class="card">
+        <span class="eyebrow">Primary Docs</span>
+        <h2>Package Guides</h2>
+        <ul>
+          <li><a href="../sql_walkthrough.md">SQL walkthrough</a></li>
+          <li><a href="../testing.md">Testing approach</a></li>
+          <li><a href="../compatibility.md">Adapter and compatibility notes</a></li>
+          <li><a href="../imports.md">Imports and package integration</a></li>
+          <li><a href="../updating.md">Upgrade and update guidance</a></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <span class="eyebrow">Generated Site</span>
+        <h2>dbt Artifacts</h2>
+        <ul>
+          <li><a href="./index.html">dbt docs site index</a></li>
+          <li><a href="./manifest.json">manifest.json</a></li>
+          <li><a href="./catalog.json">catalog.json</a></li>
+          <li><a href="./run_results.json">run_results.json</a></li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
