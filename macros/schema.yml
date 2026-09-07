@@ -1,0 +1,255 @@
+version: 2
+
+macros:
+  - name: mapping
+    description: Map one SQL expression through a native dictionary or JSON object, with optional default, safe type conversion, and formatting.
+    arguments:
+      - name: expression
+        type: string
+        description: Trusted SQL expression containing the source key.
+      - name: mapping
+        type: any
+        description: Native Jinja dictionary or JSON object string containing scalar keys and values.
+      - name: default
+        type: optional[any]
+        description: Value used when no key matches; SQL null when omitted.
+      - name: preserve_unmapped
+        type: bool
+        description: Preserve and optionally convert the input instead of applying the default.
+      - name: data_type
+        type: optional[any]
+        description: Optional string, integer, numeric, date, timestamp, or boolean output conversion.
+      - name: format
+        type: optional[dict[str, any]]
+        description: Optional display formatting applied after conversion; formatted outputs are text.
+      - name: case_sensitive
+        type: bool
+        description: Whether stringified keys use case-sensitive matching.
+  - name: clean_string
+    description: Cast, trim, collapse whitespace, normalize case, and optionally null blank strings.
+  - name: clean_code
+    description: Clean one code expression inline, with optional prefix/suffix removal, case normalization, and exact corrections.
+  - name: map_string
+    description: Map one expression through a native dictionary or JSON object string and return formatted text.
+  - name: map_integer
+    description: Map one expression and safely convert the mapped value to an integer.
+  - name: map_numeric
+    description: Map one expression and safely convert the mapped value to a numeric value with explicit precision and scale.
+  - name: map_date
+    description: Map one expression and safely convert the mapped value to a date.
+  - name: map_timestamp
+    description: Map one expression and safely convert the mapped value to a timestamp.
+  - name: map_boolean
+    description: Map one expression and safely convert the mapped value to a boolean.
+  - name: format_string
+    description: Format one string expression inline with case, whitespace, blank, and null-display controls.
+  - name: format_date
+    description: Format one typed date expression with a portable strftime-style pattern and optional null display.
+  - name: format_timestamp
+    description: Format one typed timestamp expression with a portable strftime-style pattern and optional null display.
+  - name: drop_missing_rows
+    description: Select rows where every explicitly listed column is non-null.
+  - name: distinct_rows
+    description: Remove exact full-row duplicates with SQL distinct.
+  - name: trim_rows
+    description: Select a zero-based, stop-exclusive row interval using a required deterministic ordering expression.
+  - name: undersample_classes
+    description: Deterministically retain the smallest class count from every target class.
+  - name: fill_missing
+    description: Replace a null expression with a compile-time SQL literal.
+  - name: correct_errors
+    description: Apply a compile-time exact-value correction mapping with a CASE expression.
+  - name: key_value_map
+    description: Map source keys through a native or JSON-string mapping with optional fallback, safe conversion, and type-aware formatting.
+    arguments:
+      - name: expression
+        type: string
+        description: Trusted SQL expression containing the source key.
+      - name: mapping
+        type: any
+        description: Native Jinja/YAML dictionary or JSON object string with scalar values.
+      - name: default
+        type: optional[any]
+        description: Value returned for unmapped keys; null when omitted.
+      - name: preserve_unmapped
+        type: bool
+        description: Preserve the source value instead of applying the default.
+      - name: data_type
+        type: optional[any]
+        description: Target type name or mapping containing name and numeric/boolean conversion options.
+      - name: formatting
+        type: optional[any]
+        description: Type-aware display-format configuration; formatted output is text.
+      - name: case_sensitive
+        type: bool
+        description: Whether stringified source keys use case-sensitive matching.
+  - name: convert_value
+    description: Safely convert an expression to string, integer, numeric, date, timestamp, or boolean.
+  - name: format_value
+    description: Apply type-aware string, numeric, date, timestamp, or boolean display formatting.
+  - name: format_number
+    description: Render a numeric expression with decimal places and optional grouping, prefix, suffix, and null display.
+  - name: format_temporal
+    description: Render date or timestamp values with a canonical strftime-style pattern through adapter dispatch.
+  - name: one_hot
+    description: Emit one indicator column per category in an explicit compile-time vocabulary.
+  - name: multi_hot
+    description: Emit indicator columns for delimiter-separated tokens in an explicit compile-time vocabulary.
+  - name: label_encode
+    description: Encode categories using their deterministic position in an explicit vocabulary.
+  - name: min_max_scale
+    description: Scale an expression to the zero-to-one interval with an optional window partition.
+  - name: standard_score
+    description: Calculate a sample z-score with an optional window partition.
+  - name: bin_numeric
+    description: Bin a numeric expression with explicit ordered edges and optional labels.
+  - name: clip
+    description: Clamp a numeric expression to explicit lower and upper bounds.
+  - name: percentile
+    description: Calculate a continuous window percentile through adapter dispatch.
+  - name: is_iqr_anomaly
+    description: Flag values outside configurable IQR bounds using precomputed Q1 and Q3 expressions.
+  - name: is_zscore_anomaly
+    description: Flag values whose absolute sample z-score exceeds a threshold.
+  - name: is_modified_zscore_anomaly
+    description: Flag values using explicit median and median-absolute-deviation expressions.
+  - name: assertions
+    description: Stable facade over dbt_assertions.assertions for row-level exceptions.
+  - name: rule_sum_equals
+    description: Validate that a total equals a list of signed component SQL expressions within a tolerance.
+  - name: assertions_filter
+    description: Stable facade over dbt_assertions.assertions_filter for selecting valid or quarantined rows.
+  - name: audit_columns
+    description: Emit deterministic load timestamp, invocation ID, and optional source-system audit columns.
+  - name: clean_boolean
+    description: Normalize configurable truthy and falsey values and safely return a boolean.
+  - name: clean_date
+    description: Null blank text and safely convert an expression to a date.
+  - name: clean_email
+    description: Trim, collapse whitespace, lowercase, and null blank email text without asserting validity.
+  - name: clean_integer
+    description: Null blank text and safely convert an expression to the adapter integer type.
+  - name: clean_numeric
+    description: Null blank text and safely convert an expression to a numeric value with explicit precision and scale.
+  - name: clean_phone
+    description: Remove non-digit phone characters while optionally preserving a leading plus sign.
+  - name: clean_timestamp
+    description: Null blank text and safely convert an expression to the adapter timestamp type.
+  - name: date_spine
+    description: Stable facade over dbt_utils.date_spine for producing a relation of regular date intervals.
+  - name: deduplicate
+    description: Stable facade over dbt_utils.deduplicate using explicit partition and ordering expressions.
+  - name: is_between
+    description: Validate optional lower and upper bounds with inclusive or exclusive comparison and null control.
+  - name: is_email
+    description: Validate a portable email shape with explicit null handling.
+  - name: is_in_list
+    description: Validate membership in an explicit compile-time list with case and null controls.
+  - name: is_positive
+    description: Validate that a value is greater than zero with explicit null handling.
+  - name: keep_quarantined_rows
+    description: Return the assertions predicate that retains rows containing one or more exceptions.
+  - name: keep_valid_rows
+    description: Return the assertions predicate that retains rows without exceptions.
+  - name: log_transform
+    description: Apply a natural logarithm after a configurable numeric offset.
+  - name: map_value
+    description: Low-level typed mapping primitive used by the SQL-first mapping facades.
+  - name: mask_hash
+    description: Deterministically hash an expression with an optional salt expression through dbt_utils.
+  - name: mask_redact
+    description: Replace non-null values with a fixed redaction marker, with configurable null preservation.
+  - name: normalize_whitespace
+    description: Collapse runs of whitespace through adapter dispatch without changing boundary whitespace.
+  - name: null_if_blank
+    description: Return null when a trimmed string expression is empty.
+  - name: regex_match
+    description: Return whether an expression matches a regular expression through adapter dispatch.
+  - name: regex_replace_all
+    description: Replace every regular-expression match through adapter dispatch.
+  - name: replace_outside_bounds
+    description: Preserve values inside inclusive bounds and replace non-null outliers.
+  - name: rule_compare
+    description: Validate two SQL expressions using a compile-time allow-listed comparison operator.
+  - name: rule_date_order
+    description: Validate that a start date does not follow an end date.
+  - name: rule_one_of
+    description: Validate that exactly one expression in a list is non-null.
+  - name: rule_required_when
+    description: Require an expression when a supplied SQL condition is true.
+  - name: safe_add
+    description: Stable facade over dbt_utils.safe_add for null-safe addition.
+  - name: safe_divide
+    description: Stable facade over dbt_utils.safe_divide for division with zero-denominator protection.
+  - name: safe_subtract
+    description: Stable facade over dbt_utils.safe_subtract for null-safe subtraction.
+  - name: standardize_code
+    description: Normalize a code to uppercase, apply aliases, and optionally enforce length.
+  - name: standardize_country
+    description: Normalize a country code and enforce a two-character result.
+  - name: standardize_currency
+    description: Normalize a currency code and enforce a three-character result.
+  - name: string_capitalize
+    description: Uppercase the first character and lowercase the remainder of a string.
+  - name: string_casefold
+    description: Apply the portable SQL lowercase approximation of Unicode case folding.
+  - name: string_center
+    description: Center text to a requested width using a single fill character.
+  - name: string_left_strip
+    description: Remove leading whitespace from a string expression.
+  - name: string_ljust
+    description: Right-pad text to a requested width using a single fill character.
+  - name: string_lower
+    description: Cast an expression to text and lowercase it.
+  - name: string_pad
+    description: Pad text on the left, right, or both sides to a requested width.
+  - name: string_regex_extract
+    description: Extract one regular-expression match or capture group through adapter dispatch.
+  - name: string_regex_extract_all
+    description: Extract all regular-expression matches through adapter dispatch where the warehouse supports arrays.
+  - name: string_regex_replace_many
+    description: Apply an ordered compile-time mapping of regular-expression replacements.
+  - name: string_remove_all_whitespace
+    description: Remove every run of whitespace from a string expression.
+  - name: string_remove_prefix
+    description: Remove an exact prefix when present and otherwise preserve the input.
+  - name: string_remove_punctuation
+    description: Remove punctuation characters through the adapter regular-expression implementation.
+  - name: string_remove_suffix
+    description: Remove an exact suffix when present and otherwise preserve the input.
+  - name: string_remove_whitespace
+    description: Remove leading and trailing whitespace from a string expression.
+  - name: string_replace_many
+    description: Apply an ordered compile-time mapping of literal string replacements.
+  - name: string_right_strip
+    description: Remove trailing whitespace from a string expression.
+  - name: string_rjust
+    description: Left-pad text to a requested width using a single fill character.
+  - name: string_slice
+    description: Extract a portable zero-based, stop-exclusive non-negative text slice.
+  - name: string_slice_replace
+    description: Replace a portable zero-based, stop-exclusive non-negative text slice.
+  - name: string_split_part
+    description: Return a one-based token from a delimited string through adapter dispatch.
+  - name: string_strip
+    description: Remove leading and trailing whitespace from a string expression.
+  - name: string_title
+    description: Convert whitespace-separated words to title case through adapter dispatch.
+  - name: string_translate_chars
+    description: Apply an ordered compile-time character or substring translation mapping.
+  - name: string_upper
+    description: Cast an expression to text and uppercase it.
+  - name: string_zfill
+    description: Pad numeric text with zeros while preserving an optional leading sign.
+  - name: surrogate_key
+    description: Stable facade over dbt_utils.generate_surrogate_key.
+  - name: try_cast
+    description: Safely convert an expression through an adapter implementation that returns null on invalid input.
+  - name: unicode_normalize
+    description: Apply Unicode normalization through adapter dispatch when the warehouse exposes a native function.
+  - name: union_relations
+    description: Stable facade over dbt_utils.union_relations for column-aligned union-all queries.
+  - name: winsorize
+    description: Clamp an expression to explicit precomputed lower and upper bounds.
+  - name: within_bounds
+    description: Return whether an expression lies within inclusive bounds with explicit null handling.

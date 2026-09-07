@@ -1,0 +1,269 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
+
+jobs:
+  compiler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install compiler and acceptance dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e "./python[test]"
+      - name: Run compiler unit tests
+        run: >-
+          python -m pytest python/tests
+          --cov=dbt_data_engineering_toolkit_compiler
+          --cov-report=term-missing
+          --cov-report=xml:coverage.xml
+          --cov-fail-under=80
+      - name: Run Python lint and type checks
+        working-directory: python
+        run: |
+          ruff check src tests
+          ruff format --check src tests
+          pyright
+      - name: Verify workbook construction and official Excel interoperability
+        run: |
+          det workbook build /tmp/data_product.xlsx
+          det validate /tmp/data_product.xlsx
+          det workbook build /tmp/customer_demo.xlsx --sample-customer-data --no-input
+          det validate /tmp/customer_demo.xlsx
+          det workbook refresh /tmp/data_product.xlsx
+          datacontract import excel \
+            --source /tmp/data_product.xlsx \
+            --output /tmp/data_product.odcs.yaml
+          datacontract lint /tmp/data_product.odcs.yaml
+      - name: Regenerate checked-in example deterministically
+        run: |
+          python scripts/generate_alias_facade.py
+          det generate python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_sample.xlsx \
+            --project-dir examples/compiler/customer_360 --force --prune
+          det generate \
+            python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx \
+            --project-dir examples/compiler/customer_accounts --force --prune
+          git diff --exit-code
+      - name: Run fast compiler checks
+        run: |
+          det check python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_sample.xlsx \
+            --project-dir examples/compiler/customer_360 --skip-dbt --skip-sqlfluff
+          det check \
+            python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx \
+            --project-dir examples/compiler/customer_accounts --skip-dbt --skip-sqlfluff
+      - name: Prove contract, dbt project, tests, and evaluator
+        run: >-
+          det prove
+          python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx
+          --project-dir examples/compiler/customer_accounts --local-package-root .
+
+  python-compatibility:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install and test the compiler
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e "./python[test]"
+          python -m pytest python/tests
+
+  integration:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dbt-core: ">=1.10.6,<1.11"
+            dbt-duckdb: "~=1.10.0"
+          - dbt-core: "~=1.11.0"
+            dbt-duckdb: "~=1.11.0"
+          - dbt-core: "~=1.12.0"
+            dbt-duckdb: "~=1.11.0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            "dbt-core${{ matrix.dbt-core }}" \
+            "dbt-duckdb${{ matrix.dbt-duckdb }}" \
+            "duckdb>=1.4,<1.5" \
+            "Jinja2>=3.1,<4" \
+            "PyYAML>=6,<7"
+      - name: Run static checks
+        run: python scripts/static_check.py
+      - name: Install dbt dependencies
+        working-directory: integration_tests
+        run: dbt deps --profiles-dir .
+      - name: Parse
+        working-directory: integration_tests
+        run: dbt parse --profiles-dir .
+      - name: Build
+        working-directory: integration_tests
+        run: dbt build --profiles-dir . --exclude package:dbt_project_evaluator
+      - name: Enforce public dbt macro execution coverage
+        run: >-
+          python scripts/dbt_coverage.py
+          --manifest integration_tests/target/manifest.json
+          --run-results integration_tests/target/run_results.json
+          --public-api macros/schema.yml
+          --minimum 80
+          --output integration_tests/target/dbt_coverage.json
+      - name: Exercise code generation
+        working-directory: integration_tests
+        run: >-
+          dbt run-operation generate_model_yaml
+          --profiles-dir .
+          --args '{model_names: [stg_customers, stg_namespace_aliases, stg_cleaning_operations, stg_key_value_mapping]}'
+      - name: Build evaluator models
+        working-directory: integration_tests
+        run: |
+          dbt seed --profiles-dir . --select package:dbt_project_evaluator
+          dbt run --profiles-dir . --select package:dbt_project_evaluator
+
+  adapter-contracts:
+    name: Core parse contract (${{ matrix.adapter }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - adapter: athena
+            package: dbt-athena-community~=1.10.0
+            target: athena
+          - adapter: bigquery
+            package: dbt-bigquery~=1.10.0
+            target: bigquery_static
+          - adapter: clickhouse
+            package: dbt-clickhouse~=1.10.0
+            target: clickhouse
+          - adapter: databricks
+            package: dbt-databricks~=1.10.0
+            target: databricks
+          - adapter: redshift
+            package: dbt-redshift~=1.10.0
+            target: redshift
+          - adapter: snowflake
+            package: dbt-snowflake~=1.10.0
+            target: snowflake
+          - adapter: spark
+            package: dbt-spark[PyHive]~=1.10.0
+            target: spark
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dbt Core and adapter
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "dbt-core~=1.10.0" "${{ matrix.package }}"
+      - name: Install package dependencies
+        working-directory: integration_tests
+        run: dbt deps --profiles-dir . --target "${{ matrix.target }}"
+      - name: Parse and verify adapter dispatch contracts without a connection
+        working-directory: integration_tests
+        run: |
+          dbt parse --profiles-dir . --target "${{ matrix.target }}"
+          python ../scripts/adapter_manifest_check.py \
+            --manifest target/manifest.json --adapter "${{ matrix.adapter }}"
+      - name: Render adapter contract without a connection
+        if: matrix.adapter != 'redshift'
+        working-directory: integration_tests
+        run: >-
+          dbt run-operation adapter_contract_smoke
+          --profiles-dir . --target "${{ matrix.target }}"
+      - name: Explain the Redshift render boundary
+        if: matrix.adapter == 'redshift'
+        run: >-
+          echo "dbt-redshift opens a transaction for run-operation; its rendered and
+          executable macro contract is covered by the credentialed warehouse workflow."
+
+  fusion-parse:
+    name: Fusion validation (${{ matrix.adapter }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - adapter: duckdb
+            target: dev
+          - adapter: bigquery
+            target: bigquery_static
+          - adapter: databricks
+            target: databricks
+          - adapter: redshift
+            target: redshift
+          - adapter: snowflake
+            target: snowflake
+          - adapter: spark
+            target: spark
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dbt Fusion
+        run: python -m pip install --pre "dbt>=2.0.0,<3.0.0"
+      - name: Resolve dbt package dependencies
+        working-directory: integration_tests
+        run: dbt deps --profiles-dir . --target "${{ matrix.target }}"
+      - name: Build the complete suite with Fusion and DuckDB
+        if: matrix.adapter == 'duckdb'
+        working-directory: integration_tests
+        run: |
+          dbt build --profiles-dir . --target dev \
+            --exclude package:dbt_project_evaluator \
+            --static-analysis=off \
+            --no-manage-state \
+            --vars '{deactivate_for_fusion: true}'
+          python ../scripts/dbt_coverage.py \
+            --manifest target/manifest.json \
+            --run-results target/run_results.json \
+            --public-api ../macros/schema.yml \
+            --macros-dir ../macros \
+            --minimum 80 \
+            --output target/dbt_coverage.json
+      - name: Parse cloud targets with evaluator-safe Fusion settings
+        if: matrix.adapter != 'duckdb'
+        working-directory: integration_tests
+        run: >-
+          dbt parse --profiles-dir . --target "${{ matrix.target }}"
+          --static-analysis=off --no-manage-state
+          --vars '{deactivate_for_fusion: true}'
+
+  deprecations:
+    name: dbt deprecations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Require a clean dbt-autofix deprecation scan
+        run: uvx dbt-autofix deprecations --path . --dry-run

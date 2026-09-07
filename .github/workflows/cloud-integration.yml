@@ -1,0 +1,129 @@
+name: Credentialed warehouse integration
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
+
+jobs:
+  core:
+    uses: dbt-labs/dbt-package-testing/.github/workflows/run_tox.yml@v2
+    with:
+      adapters: "snowflake,bigquery,redshift,databricks,athena,spark"
+      ATHENA_DATABASE: ${{ vars.ATHENA_DATABASE }}
+      ATHENA_REGION_NAME: ${{ vars.ATHENA_REGION_NAME }}
+      ATHENA_S3_DATA_DIR: ${{ vars.ATHENA_S3_DATA_DIR }}
+      ATHENA_S3_DATA_NAMING: ${{ vars.ATHENA_S3_DATA_NAMING }}
+      ATHENA_S3_STAGING_DIR: ${{ vars.ATHENA_S3_STAGING_DIR }}
+      ATHENA_SCHEMA: "det_core_athena_${{ github.run_number }}"
+      BIGQUERY_PROJECT: ${{ vars.BIGQUERY_PROJECT }}
+      BIGQUERY_SCHEMA: "det_core_bigquery_${{ github.run_number }}"
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_HTTP_PATH: ${{ vars.DATABRICKS_HTTP_PATH }}
+      DATABRICKS_SCHEMA: "det_core_databricks_${{ github.run_number }}"
+      REDSHIFT_HOST: ${{ vars.REDSHIFT_HOST }}
+      REDSHIFT_USER: ${{ vars.REDSHIFT_USER }}
+      REDSHIFT_DATABASE: ${{ vars.REDSHIFT_DATABASE }}
+      REDSHIFT_PORT: ${{ vars.REDSHIFT_PORT }}
+      REDSHIFT_SCHEMA: "det_core_redshift_${{ github.run_number }}"
+      SNOWFLAKE_USER: ${{ vars.SNOWFLAKE_USER }}
+      SNOWFLAKE_ROLE: ${{ vars.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_WAREHOUSE: ${{ vars.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_SCHEMA: "DET_CORE_SNOWFLAKE_${{ github.run_number }}"
+      SPARK_HOST: ${{ vars.SPARK_HOST }}
+      SPARK_METHOD: ${{ vars.SPARK_METHOD }}
+      SPARK_PORT: ${{ vars.SPARK_PORT }}
+      SPARK_SCHEMA: "det_core_spark_${{ github.run_number }}"
+      SPARK_USER: ${{ vars.SPARK_USER }}
+    secrets:
+      DBT_ENV_SECRET_ATHENA_AWS_ACCESS_KEY_ID: ${{ secrets.DBT_ENV_SECRET_ATHENA_AWS_ACCESS_KEY_ID }}
+      DBT_ENV_SECRET_ATHENA_AWS_SECRET_ACCESS_KEY: ${{ secrets.DBT_ENV_SECRET_ATHENA_AWS_SECRET_ACCESS_KEY }}
+      BIGQUERY_KEYFILE_JSON: ${{ secrets.BIGQUERY_KEYFILE_JSON }}
+      DBT_ENV_SECRET_DATABRICKS_TOKEN: ${{ secrets.DBT_ENV_SECRET_DATABRICKS_TOKEN }}
+      DBT_ENV_SECRET_REDSHIFT_PASS: ${{ secrets.DBT_ENV_SECRET_REDSHIFT_PASS }}
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      DBT_ENV_SECRET_SNOWFLAKE_PASS: ${{ secrets.DBT_ENV_SECRET_SNOWFLAKE_PASS }}
+
+  fusion:
+    uses: dbt-labs/dbt-package-testing/.github/workflows/run_tox_fusion.yml@v2
+    with:
+      adapters: "snowflake,bigquery,redshift,databricks"
+      BIGQUERY_PROJECT: ${{ vars.BIGQUERY_PROJECT }}
+      BIGQUERY_SCHEMA: "det_fusion_bigquery_${{ github.run_number }}"
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_HTTP_PATH: ${{ vars.DATABRICKS_HTTP_PATH }}
+      DATABRICKS_SCHEMA: "det_fusion_databricks_${{ github.run_number }}"
+      REDSHIFT_HOST: ${{ vars.REDSHIFT_HOST }}
+      REDSHIFT_USER: ${{ vars.REDSHIFT_USER }}
+      REDSHIFT_DATABASE: ${{ vars.REDSHIFT_DATABASE }}
+      REDSHIFT_PORT: ${{ vars.REDSHIFT_PORT }}
+      REDSHIFT_SCHEMA: "det_fusion_redshift_${{ github.run_number }}"
+      SNOWFLAKE_USER: ${{ vars.SNOWFLAKE_USER }}
+      SNOWFLAKE_ROLE: ${{ vars.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_WAREHOUSE: ${{ vars.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_SCHEMA: "DET_FUSION_SNOWFLAKE_${{ github.run_number }}"
+    secrets:
+      BIGQUERY_KEYFILE_JSON: ${{ secrets.BIGQUERY_KEYFILE_JSON }}
+      DBT_ENV_SECRET_DATABRICKS_TOKEN: ${{ secrets.DBT_ENV_SECRET_DATABRICKS_TOKEN }}
+      DBT_ENV_SECRET_REDSHIFT_PASS: ${{ secrets.DBT_ENV_SECRET_REDSHIFT_PASS }}
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      DBT_ENV_SECRET_SNOWFLAKE_PASS: ${{ secrets.DBT_ENV_SECRET_SNOWFLAKE_PASS }}
+
+  spark-fusion:
+    name: Fusion build (Spark)
+    runs-on: ubuntu-latest
+    env:
+      SPARK_HOST: ${{ vars.SPARK_HOST }}
+      SPARK_METHOD: ${{ vars.SPARK_METHOD }}
+      SPARK_PORT: ${{ vars.SPARK_PORT }}
+      SPARK_SCHEMA: "det_fusion_spark_${{ github.run_number }}"
+      SPARK_USER: ${{ vars.SPARK_USER }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dbt Fusion
+        run: python -m pip install --pre "dbt>=2.0.0,<3.0.0"
+      - name: Build integration suite against Spark
+        working-directory: integration_tests
+        run: bash ../scripts/run_fusion_integration.sh spark
+
+  clickhouse-core:
+    name: Core build (ClickHouse)
+    runs-on: ubuntu-latest
+    env:
+      DET_CLICKHOUSE_HOST: ${{ vars.DET_CLICKHOUSE_HOST }}
+      DET_CLICKHOUSE_PORT: ${{ vars.DET_CLICKHOUSE_PORT }}
+      DET_CLICKHOUSE_SCHEMA: "det_core_${{ github.run_number }}"
+      DET_CLICKHOUSE_USER: ${{ vars.DET_CLICKHOUSE_USER }}
+      DBT_ENV_SECRET_DET_CLICKHOUSE_PASSWORD: ${{ secrets.DBT_ENV_SECRET_DET_CLICKHOUSE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dbt Core and ClickHouse adapter
+        run: python -m pip install "dbt-core~=1.10.0" "dbt-clickhouse~=1.10.0"
+      - name: Build integration suite against ClickHouse
+        working-directory: integration_tests
+        run: |
+          dbt deps --profiles-dir . --target clickhouse
+          dbt build --profiles-dir . --target clickhouse \
+            --exclude package:dbt_project_evaluator --full-refresh
+          python ../scripts/dbt_coverage.py \
+            --manifest target/manifest.json \
+            --run-results target/run_results.json \
+            --public-api ../macros/schema.yml \
+            --macros-dir ../macros \
+            --minimum 80 \
+            --output target/dbt_coverage.json

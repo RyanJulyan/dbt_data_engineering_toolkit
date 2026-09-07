@@ -1,0 +1,49 @@
+{
+  "adapter": "duckdb",
+  "compiler_version": "2.3.0",
+  "contract_authority": "datacontract",
+  "dbt_adapter_dependency": "dbt-duckdb>=1.10,<2",
+  "files": {
+    ".sqlfluff": "7675f06de098b399fbdf25d6bdf7316c062b016f2523365a56e7676626f99800",
+    ".sqlfluffignore": "16e2c1abd5df04cec716b37bebb05e98534be622889a99c18cfb72a53dbea262",
+    "Makefile": "14022f027e99b547fd21e14a4c5c0fc9fb0dced3c85456d2682403cc636756a8",
+    "README.md": "56cfaee66fc5f573e9185f03518ef191d407c1ed7661d514d9c47a29d7052861",
+    "contracts/customer_360.det.yaml": "c8c7965a97505b3f8beeb5be7d08b2318fde18ea5f0b2b98f1bac3554ee31b5e",
+    "contracts/customer_360.odcs.yaml": "2a5c027c7f9db9bee7ae8d04905a30f91b6fde774c594bf2f0a0774b5545e162",
+    "dbt_project.yml": "b43487123225339a77a5bcb0530834eb5ff49e0f113078c23e0d91eec3b44aca",
+    "models/quarantine/stg_customers_rejected.sql": "cae74e1a0cb8090284ec4c813a5255f99c96461dce9c202d8d279212746f3cd7",
+    "models/quarantine/stg_customers_valid.sql": "0b6dabf77aea25375dc1ce14188bca4cb9a9f98411fcbba4c381daae7030b823",
+    "models/sources.yml": "feb70e3925a650928465a6d38938b8382eed43836a9cb153100f5026e0fd258f",
+    "models/staging/stg_customers.sql": "6160f2c71b1128ef105b2035fe48ba78ac39402d5e9c5236503b605d713bd753",
+    "models/staging/stg_customers.yml": "324c640b2f7590948d5ed192c920401d9af4cb0291fd98b4e30339ea8faee5dd",
+    "packages.yml": "05336527a37f47be0e596fdb648f08bc864ad71c5cd8aed64d0cc3e54f00cd37",
+    "profiles.yml": "aa65f9b4de98a73809f5f3abf429876a73c4737e2d40e4284d157fa0c091ba02",
+    "tests/datacontract_cli/dc_stg_customers__the_published_cus__46e04bf08462.sql": "64484679bf79e0eec4591b50928a30bece72e486b60aa92a9ead2e33589a3892"
+  },
+  "managed_by": {
+    "compiler": [
+      ".sqlfluff",
+      ".sqlfluffignore",
+      "Makefile",
+      "README.md",
+      "contracts/customer_360.det.yaml",
+      "contracts/customer_360.odcs.yaml",
+      "dbt_project.yml",
+      "models/quarantine/stg_customers_rejected.sql",
+      "models/quarantine/stg_customers_valid.sql",
+      "models/sources.yml",
+      "models/staging/stg_customers.sql",
+      "models/staging/stg_customers.yml",
+      "packages.yml",
+      "profiles.yml"
+    ],
+    "contract_sync": [
+      "models/staging/stg_customers.yml",
+      "tests/datacontract_cli/dc_stg_customers__the_published_cus__46e04bf08462.sql"
+    ]
+  },
+  "odcs_version": "3.1.0",
+  "operator_registry_sha256": "1429ce4f80e5f9adf552a3fd404d94b7e7a0cd98434fff6fafe63717a8a6b8cf",
+  "workbook_schema_version": "2.3.0",
+  "workbook_sha256": "e413bc8ac350a9f028d0d9632774fcfbcafcee91b79436105a2b9d7edb1e51b4"
+}

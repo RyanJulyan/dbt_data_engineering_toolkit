@@ -1,0 +1,6 @@
+id,raw_text,code,category,amount,tags,signed_number
+1,"  PRE_Hello,   WORLD!_suf  ",ERR,alpha,-5,red|blue,-7
+2,PRE_Data-OPS_suf,OK,beta,25,green|gold,42
+3," PRE_Mixed.Case_suf ",legacy,alpha,200,black|white,9
+4,"   ",ERR,,,single,0
+2,PRE_Data-OPS_suf,OK,beta,25,green|gold,42

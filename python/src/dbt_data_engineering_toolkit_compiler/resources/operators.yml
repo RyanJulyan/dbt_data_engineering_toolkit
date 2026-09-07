@@ -1,0 +1,240 @@
+version: 1
+operators:
+  - key: copy
+    label: Copy value
+    kind: transformation
+    macro: null
+    input_types: [any]
+    output_type: same
+    ba_safe: true
+  - key: clean_text
+    label: Clean text
+    kind: transformation
+    macro: clean_string
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+    parameters:
+      trim: {type: boolean, default: true}
+      collapse_whitespace: {type: boolean, default: true}
+      case: {type: choice, values: [preserve, lower, upper], default: preserve}
+      blank_as_null: {type: boolean, default: true}
+  - key: clean_email
+    label: Clean email
+    kind: transformation
+    macro: clean_email
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+  - key: clean_phone
+    label: Clean phone
+    kind: transformation
+    macro: clean_phone
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+    parameters:
+      keep_plus: {type: boolean, default: true}
+  - key: clean_numeric
+    label: Clean number
+    kind: transformation
+    macro: clean_numeric
+    input_types: [string, integer, number, numeric]
+    output_type: number
+    ba_safe: true
+    parameters:
+      precision: {type: integer, default: 38, minimum: 1}
+      scale: {type: integer, default: 6, minimum: 0}
+  - key: clean_integer
+    label: Clean whole number
+    kind: transformation
+    macro: clean_integer
+    input_types: [string, integer, number, numeric]
+    output_type: integer
+    ba_safe: true
+  - key: clean_date
+    label: Clean date
+    kind: transformation
+    macro: clean_date
+    input_types: [string, date, timestamp]
+    output_type: date
+    ba_safe: true
+  - key: clean_timestamp
+    label: Clean timestamp
+    kind: transformation
+    macro: clean_timestamp
+    input_types: [string, date, timestamp]
+    output_type: timestamp
+    ba_safe: true
+  - key: clean_boolean
+    label: Clean true/false
+    kind: transformation
+    macro: clean_boolean
+    input_types: [string, boolean, integer]
+    output_type: boolean
+    ba_safe: true
+  - key: clean_code
+    label: Clean code
+    kind: transformation
+    macro: clean_code
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+    parameters:
+      remove_prefix: {type: string, required: false}
+      remove_suffix: {type: string, required: false}
+      case: {type: choice, values: [preserve, lower, upper], default: upper}
+      blank_as_null: {type: boolean, default: true}
+  - key: standardize_country
+    label: Standardise country
+    kind: transformation
+    macro: standardize_country
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+  - key: standardize_currency
+    label: Standardise currency
+    kind: transformation
+    macro: standardize_currency
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+  - key: map_values
+    label: Map values
+    kind: transformation
+    macro: mapping
+    input_types: [any]
+    output_type: configured
+    ba_safe: true
+    parameters:
+      lookup: {type: lookup, required: true}
+      default: {type: any, required: false}
+      preserve_unmapped: {type: boolean, default: false}
+      case_sensitive: {type: boolean, default: true}
+      data_type: {type: choice, values: [string, integer, numeric, date, timestamp, boolean], required: false}
+      precision: {type: integer, required: false, minimum: 1, default: 38}
+      scale: {type: integer, required: false, minimum: 0, default: 6}
+      format_pattern: {type: string, required: false}
+      format_case: {type: choice, values: [preserve, lower, upper, title], required: false}
+  - key: fill_missing
+    label: Fill missing
+    kind: transformation
+    macro: fill_missing
+    input_types: [any]
+    output_type: same
+    ba_safe: true
+    parameters:
+      value: {type: any, required: true}
+  - key: correct_errors
+    label: Correct known errors
+    kind: transformation
+    macro: correct_errors
+    input_types: [any]
+    output_type: same
+    ba_safe: true
+    parameters:
+      lookup: {type: lookup, required: true}
+      case_sensitive: {type: boolean, default: true}
+  - key: lower
+    label: Lower case
+    kind: transformation
+    macro: lower
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+  - key: upper
+    label: Upper case
+    kind: transformation
+    macro: upper
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+  - key: title
+    label: Title case
+    kind: transformation
+    macro: title
+    input_types: [string]
+    output_type: string
+    ba_safe: true
+  - key: required
+    label: Required
+    kind: validation
+    macro: null
+    input_types: [any]
+    output_type: boolean
+    ba_safe: true
+  - key: unique
+    label: Unique
+    kind: validation
+    macro: null
+    input_types: [any]
+    output_type: boolean
+    ba_safe: true
+  - key: is_email
+    label: Valid email
+    kind: validation
+    macro: is_email
+    input_types: [string]
+    output_type: boolean
+    ba_safe: true
+    parameters:
+      allow_null: {type: boolean, default: false}
+  - key: is_positive
+    label: Positive number
+    kind: validation
+    macro: is_positive
+    input_types: [integer, number, numeric]
+    output_type: boolean
+    ba_safe: true
+    parameters:
+      allow_null: {type: boolean, default: false}
+  - key: is_between
+    label: Number in range
+    kind: validation
+    macro: is_between
+    input_types: [integer, number, numeric]
+    output_type: boolean
+    ba_safe: true
+    parameters:
+      min_value: {type: number, required: false}
+      max_value: {type: number, required: false}
+      inclusive: {type: boolean, default: true}
+      allow_null: {type: boolean, default: false}
+  - key: is_in_list
+    label: Value in list
+    kind: validation
+    macro: is_in_list
+    input_types: [any]
+    output_type: boolean
+    ba_safe: true
+    parameters:
+      values: {type: list, required: true}
+      allow_null: {type: boolean, default: false}
+      case_sensitive: {type: boolean, default: true}
+  - key: regex_match
+    label: Matches pattern
+    kind: validation
+    macro: regex_match
+    input_types: [string]
+    output_type: boolean
+    ba_safe: true
+    parameters:
+      pattern: {type: string, required: true}
+  - key: no_future_date
+    label: Not in future
+    kind: validation
+    macro: rule_compare
+    input_types: [date, timestamp]
+    output_type: boolean
+    ba_safe: true
+  - key: rule_compare
+    label: Compare fields
+    kind: validation
+    macro: rule_compare
+    input_types: [any]
+    output_type: boolean
+    ba_safe: true
+    parameters:
+      operator: {type: choice, values: ['=', '!=', '<>', '<', '<=', '>', '>='], required: true}
+      compare_to: {type: expression, required: true}
+      allow_null: {type: boolean, default: false}

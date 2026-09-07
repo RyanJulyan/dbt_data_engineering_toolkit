@@ -1,0 +1,6 @@
+packages:
+  - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
+    revision: v2.3.0
+  - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
+    revision: v2.3.0
+    subdirectory: aliases/de_toolkit

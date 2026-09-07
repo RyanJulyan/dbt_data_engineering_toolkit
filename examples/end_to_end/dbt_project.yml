@@ -1,0 +1,30 @@
+name: dbt_data_engineering_toolkit_end_to_end
+version: 1.0.0
+config-version: 2
+
+profile: dbt_data_engineering_toolkit_end_to_end
+
+require-dbt-version: [">=1.10.6", "<3.0.0"]
+
+dispatch:
+  - macro_namespace: dbt
+    search_order: ["dbt_project_evaluator", "dbt"]
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+clean-targets: ["target", "dbt_packages", "logs", "end_to_end.duckdb"]
+
+vars:
+  exclude_packages: ["all"]
+
+models:
+  dbt_data_engineering_toolkit_end_to_end:
+    +materialized: table
+    quarantine:
+      +materialized: view
+
+seeds:
+  dbt_data_engineering_toolkit_end_to_end:
+    +quote_columns: false

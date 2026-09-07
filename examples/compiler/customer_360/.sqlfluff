@@ -1,0 +1,10 @@
+[sqlfluff]
+templater = dbt
+dialect = duckdb
+max_line_length = 100
+exclude_rules = layout.long_lines
+
+[sqlfluff:templater:dbt]
+project_dir = .
+profiles_dir = .
+profile = customer_360

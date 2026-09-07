@@ -1,0 +1,5 @@
+customer_id,customer_name,email,phone,active,revenue,signup_date,country,status_code,price_band,event_code,account_code
+1," Alice   Smith ",ALICE@example.com,"+27 (82) 555-0101",yes,1234.5,2026-01-10,South Africa,A,standard,launch,legacy_uk
+2,Bob Jones,bob-at-example.com,0825550102,no,-20,2099-01-01,United States,I,premium,renewal,legacy_us
+3," Carol   Ndlovu ",carol@example.com,,true,,2026-05-03,ZA,X,unknown,review,legacy_za
+1," Alice   Smith ",ALICE@example.com,"+27 (82) 555-0101",yes,1234.5,2026-01-10,South Africa,A,standard,launch,legacy_uk

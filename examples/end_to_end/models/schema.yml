@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: stg_customer_events
+    description: Cleaned, standardized, mapped, validated, and asserted customer events.
+    columns:
+      - name: customer_id
+        description: Stable customer identifier converted to text.
+        data_tests: [not_null, unique]
+      - name: status_label
+        description: Status code mapped through a JSON object and formatted as uppercase text.
+      - name: price_amount
+        description: Price band mapped and safely converted to a numeric value.
+      - name: price_display
+        description: Presentation-only formatted price string.
+      - name: exceptions
+        description: Named row-level validation failures populated by the toolkit assertion facade.
+        config:
+          meta:
+            assertions:
+              email_valid:
+                description: Email must have a valid shape.
+                expression: _email_valid
+                null_as_exception: true
+              revenue_valid:
+                description: Revenue must be positive when supplied.
+                expression: _revenue_valid
+                null_as_exception: true
+              signup_date_valid:
+                description: Signup date must be present and cannot be in the future.
+                expression: _signup_date_valid
+                null_as_exception: true
+
+  - name: stg_customer_events_valid
+    description: Rows with an empty exceptions array.
+    columns:
+      - name: email
+        data_tests:
+          - dbt_data_engineering_toolkit.valid_email:
+              arguments:
+                allow_null: false
+
+  - name: stg_customer_events_rejected
+    description: Rows with one or more named exceptions for remediation.

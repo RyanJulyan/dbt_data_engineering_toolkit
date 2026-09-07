@@ -1,0 +1,111 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: Integration fixture for inline cleaning and assertions.
+    columns:
+      - name: customer_id
+        data_tests: [not_null, unique]
+      - name: exceptions
+        config:
+          meta:
+            assertions:
+              email_valid:
+                description: Email must have a valid shape.
+                expression: _email_valid
+                null_as_exception: true
+              revenue_valid:
+                description: Revenue must be positive when supplied.
+                expression: _revenue_valid
+                null_as_exception: true
+
+  - name: stg_orders
+    description: Integration fixture for cross-column business rules.
+    columns:
+      - name: order_id
+        data_tests: [not_null, unique]
+      - name: exceptions
+        config:
+          meta:
+            assertions:
+              total_reconciles:
+                expression: _total_reconciles
+                null_as_exception: true
+              date_order_valid:
+                expression: _date_order_valid
+                null_as_exception: true
+              cancellation_reason_valid:
+                expression: _cancellation_reason_valid
+                null_as_exception: true
+
+  - name: stg_customers_valid
+    columns:
+      - name: email
+        data_tests:
+          - dbt_data_engineering_toolkit.valid_email:
+              arguments:
+                allow_null: false
+          - de_toolkit.valid_email:
+              arguments:
+                allow_null: false
+
+  - name: stg_namespace_aliases
+    description: Proves that the canonical and short namespaces compile to equivalent expressions.
+    columns:
+      - name: customer_id
+        data_tests: [not_null, unique]
+      - name: exceptions
+        config:
+          meta:
+            assertions:
+              namespaces_match:
+                description: Canonical and short namespace calls must return identical values.
+                expression: _namespaces_match
+                null_as_exception: true
+
+  - name: stg_cleaning_operations
+    description: Executable fixture for deterministic cleaning operations.
+    columns:
+      - name: id
+        data_tests: [not_null, unique]
+      - name: amount_filled
+        data_tests:
+          - dbt_data_engineering_toolkit.minimum_variance:
+              arguments:
+                threshold: 0
+      - name: amount_clipped
+        data_tests:
+          - dbt_data_engineering_toolkit.correlation_above:
+              arguments:
+                target_column: amount_filled
+                minimum: 0.5
+
+  - name: advanced_cleaning_operations
+    description: Adapter-dispatched statistical and string-operation fixture.
+
+  - name: stg_key_value_mapping
+    description: Integration fixture for JSON-style mappings, defaults, safe type conversion, and display formatting.
+    columns:
+      - name: id
+        data_tests: [not_null, unique]
+
+  - name: public_api_coverage
+    description: Executes every documented public macro as part of the enforced dbt coverage gate.
+    columns:
+      - name: id
+        data_tests: [not_null, unique]
+
+  - name: public_api_scalar_coverage
+    description: Executes the complete scalar public API surface for source-derived dbt coverage.
+    columns:
+      - name: id
+        data_tests: [not_null, unique]
+
+  - name: public_api_date_spine
+    description: Executes the public date-spine relation facade.
+
+  - name: public_api_deduplicate
+    description: Executes the public deduplication relation facade.
+
+  - name: public_api_union_relations
+    description: Executes the public union-relations facade.

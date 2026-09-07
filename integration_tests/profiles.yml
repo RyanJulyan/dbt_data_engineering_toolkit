@@ -1,0 +1,81 @@
+dbt_data_engineering_toolkit_integration_tests:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: integration.duckdb
+      schema: integration
+      threads: 2
+    athena:
+      type: athena
+      database: "{{ env_var('ATHENA_DATABASE', 'awsdatacatalog') }}"
+      schema: "{{ env_var('ATHENA_SCHEMA', 'integration') }}"
+      s3_staging_dir: "{{ env_var('ATHENA_S3_STAGING_DIR', 's3://det-ci-placeholder/results/') }}"
+      region_name: "{{ env_var('ATHENA_REGION_NAME', 'us-east-1') }}"
+      aws_access_key_id: "{{ env_var('DBT_ENV_SECRET_ATHENA_AWS_ACCESS_KEY_ID', 'placeholder') }}"
+      aws_secret_access_key: "{{ env_var('DBT_ENV_SECRET_ATHENA_AWS_SECRET_ACCESS_KEY', 'placeholder') }}"
+      threads: 2
+    bigquery:
+      type: bigquery
+      method: service-account-json
+      project: "{{ env_var('BIGQUERY_PROJECT', 'det-ci-placeholder') }}"
+      dataset: "{{ env_var('BIGQUERY_SCHEMA', 'integration') }}"
+      keyfile_json: "{{ env_var('BIGQUERY_KEYFILE_JSON', '{}') | as_native }}"
+      location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
+      threads: 2
+    bigquery_static:
+      type: bigquery
+      method: oauth-secrets
+      project: det-ci-placeholder
+      dataset: integration
+      token_uri: https://oauth2.googleapis.com/token
+      client_id: placeholder.apps.googleusercontent.com
+      client_secret: placeholder
+      refresh_token: placeholder
+      location: US
+      threads: 2
+    clickhouse:
+      type: clickhouse
+      host: "{{ env_var('DET_CLICKHOUSE_HOST', 'localhost') }}"
+      port: "{{ env_var('DET_CLICKHOUSE_PORT', '8443') | int }}"
+      user: "{{ env_var('DET_CLICKHOUSE_USER', 'default') }}"
+      password: "{{ env_var('DBT_ENV_SECRET_DET_CLICKHOUSE_PASSWORD', '') }}"
+      schema: "{{ env_var('DET_CLICKHOUSE_SCHEMA', 'integration') }}"
+      secure: true
+      verify: true
+      threads: 2
+    databricks:
+      type: databricks
+      host: "{{ env_var('DATABRICKS_HOST', 'det-ci-placeholder.cloud.databricks.com') }}"
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH', '/sql/1.0/warehouses/placeholder') }}"
+      token: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_TOKEN', 'placeholder') }}"
+      catalog: "{{ env_var('DATABRICKS_CATALOG', 'hive_metastore') }}"
+      schema: "{{ env_var('DATABRICKS_SCHEMA', 'integration') }}"
+      threads: 2
+    redshift:
+      type: redshift
+      host: "{{ env_var('REDSHIFT_HOST', 'localhost') }}"
+      port: "{{ env_var('REDSHIFT_PORT', '5439') | int }}"
+      user: "{{ env_var('REDSHIFT_USER', 'dbt') }}"
+      password: "{{ env_var('DBT_ENV_SECRET_REDSHIFT_PASS', 'placeholder') }}"
+      dbname: "{{ env_var('REDSHIFT_DATABASE', 'analytics') }}"
+      schema: "{{ env_var('REDSHIFT_SCHEMA', 'integration') }}"
+      threads: 2
+    snowflake:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'det-ci-placeholder') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'dbt') }}"
+      password: "{{ env_var('DBT_ENV_SECRET_SNOWFLAKE_PASS', 'placeholder') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'TRANSFORMER') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'ANALYTICS') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'TRANSFORMING') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA', 'INTEGRATION') }}"
+      threads: 2
+    spark:
+      type: spark
+      method: "{{ env_var('SPARK_METHOD', 'thrift') }}"
+      host: "{{ env_var('SPARK_HOST', 'localhost') }}"
+      port: "{{ env_var('SPARK_PORT', '10001') | int }}"
+      user: "{{ env_var('SPARK_USER', 'dbt') }}"
+      schema: "{{ env_var('SPARK_SCHEMA', 'integration') }}"
+      threads: 2

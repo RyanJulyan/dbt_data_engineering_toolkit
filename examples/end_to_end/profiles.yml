@@ -1,0 +1,8 @@
+dbt_data_engineering_toolkit_end_to_end:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: end_to_end.duckdb
+      schema: demo
+      threads: 2

@@ -1,0 +1,5 @@
+order_id,subtotal,tax,discount,total,start_date,end_date,status,cancellation_reason
+o-1,100.00,15.00,5.00,110.00,2026-01-01,2026-01-02,completed,
+o-2,100.00,15.00,5.00,999.00,2026-02-02,2026-02-01,cancelled,
+o-3,50.00,7.50,0.00,57.50,2026-03-01,2026-03-01,cancelled,customer request
+

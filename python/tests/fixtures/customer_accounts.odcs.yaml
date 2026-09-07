@@ -1,0 +1,114 @@
+apiVersion: v3.1.0
+kind: DataContract
+id: urn:datacontract:customer:customer_accounts
+name: Customer Accounts
+version: 1.0.0
+status: draft
+domain: customer
+dataProduct: customer_accounts
+description:
+  purpose: Join governed customer identities to account attributes.
+schema:
+  - name: stg_customers
+    physicalType: table
+    description: Clean customer identities and operational warnings.
+    quality:
+      - id: customers_not_empty
+        type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+    properties:
+      - name: customer_id
+        businessName: Customer ID
+        logicalType: string
+        physicalType: varchar
+        description: Stable customer identifier.
+        required: true
+        unique: true
+        primaryKey: true
+        classification: internal
+      - name: account_id
+        businessName: Account ID
+        logicalType: string
+        physicalType: varchar
+        description: Account join key.
+        required: true
+      - name: customer_name
+        businessName: Customer Name
+        logicalType: string
+        physicalType: varchar
+        description: Clean display name.
+      - name: email
+        businessName: Email Address
+        logicalType: string
+        physicalType: varchar
+        description: Normalized contact email.
+        classification: restricted
+      - name: status_label
+        businessName: Account Status
+        logicalType: string
+        physicalType: varchar
+        description: Business status mapped from a controlled lookup.
+      - name: _det_warnings
+        logicalType: string
+        physicalType: varchar[]
+        description: Operational warning identifiers.
+      - name: _det_loaded_at
+        logicalType: timestamp
+        physicalType: timestamp with time zone
+      - name: _det_invocation_id
+        logicalType: string
+        physicalType: varchar
+      - name: _det_source_system
+        logicalType: string
+        physicalType: varchar
+  - name: customer_account_mart
+    physicalType: table
+    description: Customer account data product joined at customer grain.
+    properties:
+      - name: customer_id
+        businessName: Customer ID
+        logicalType: string
+        physicalType: varchar
+        required: true
+        unique: true
+        primaryKey: true
+      - name: account_id
+        businessName: Account ID
+        logicalType: string
+        physicalType: varchar
+        required: true
+      - name: customer_name
+        businessName: Customer Name
+        logicalType: string
+        physicalType: varchar
+      - name: email
+        businessName: Email Address
+        logicalType: string
+        physicalType: varchar
+        classification: restricted
+      - name: status_label
+        businessName: Account Status
+        logicalType: string
+        physicalType: varchar
+      - name: account_tier
+        businessName: Account Tier
+        logicalType: string
+        physicalType: varchar
+      - name: lifetime_value
+        businessName: Lifetime Value
+        logicalType: number
+        physicalType: decimal(18,2)
+      - name: _det_rejections
+        logicalType: string
+        physicalType: varchar[]
+      - name: _det_loaded_at
+        logicalType: timestamp
+        physicalType: timestamp with time zone
+      - name: _det_invocation_id
+        logicalType: string
+        physicalType: varchar
+      - name: _det_source_system
+        logicalType: string
+        physicalType: varchar

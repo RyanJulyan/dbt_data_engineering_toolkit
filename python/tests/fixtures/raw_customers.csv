@@ -1,0 +1,4 @@
+customer_id,account_id,customer_name,email,status_code
+C001,A100,"  ada   lovelace ",ADA@EXAMPLE.COM,A
+C002,A200,"grace hopper",grace@example.com,I
+C003,A200,"Katherine Johnson",not-an-email,A

@@ -1,0 +1,4 @@
+customer_id,customer_name,email,revenue,event_code,status_code
+ C001 , Alice Example ,ALICE@EXAMPLE.COM,1200.50,launch,A
+C002,Bob Example,not-an-email,-5,renewal,I
+C003,Carol Example,,250,unknown,X

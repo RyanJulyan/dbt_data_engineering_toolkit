@@ -1,0 +1,5 @@
+customer_id,customer_name,email,phone,active,revenue,signup_date,country_code
+1,"   Alice    Smith   "," ALICE@EXAMPLE.COM ","+27 (82) 555-0101",YES,100.25,2026-01-02,South Africa
+2," Bob  Jones ",not-an-email," 082 555 0102 ",no,not-a-number,not-a-date,ZA
+3,"   ",,__,maybe,,2026-02-03,United States
+
