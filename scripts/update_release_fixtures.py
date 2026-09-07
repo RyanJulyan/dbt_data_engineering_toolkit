@@ -20,6 +20,11 @@ WORKBOOKS = (
     ROOT
     / "python/src/dbt_data_engineering_toolkit_compiler/resources/data_product_multi_source_sample.xlsx",
 )
+RELEASE_OUTPUTS = [
+    *WORKBOOKS,
+    ROOT / "examples/compiler/customer_360",
+    ROOT / "examples/compiler/customer_accounts",
+]
 
 
 def update_workbook_template_version(path: Path) -> None:
@@ -53,6 +58,10 @@ def run_command(args: list[str]) -> None:
         sys.stdout.write(result.stdout)
         sys.stderr.write(result.stderr)
         raise SystemExit(result.returncode)
+
+
+def stage_release_outputs() -> None:
+    run_command(["git", "add", "--", *[str(path.relative_to(ROOT)) for path in RELEASE_OUTPUTS]])
 
 
 def main() -> int:
@@ -104,6 +113,7 @@ def main() -> int:
             "--force",
         ]
     )
+    stage_release_outputs()
     return 0
 
 
