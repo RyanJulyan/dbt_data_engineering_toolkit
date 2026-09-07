@@ -81,6 +81,9 @@ the project or a pending trusted publisher with:
 This setup is required before the first automated publish. Trusted publishing will fail until PyPI
 has a matching trusted publisher entry for this repository/workflow/environment tuple.
 
+If `https://pypi.org/project/dbt-data-engineering-toolkit-compiler/` is 404, that is expected
+before first publish.
+
 Before first publish, complete this checklist in PyPI:
 
 1. Sign in to PyPI and open `Publishing` for `dbt-data-engineering-toolkit-compiler`.
@@ -89,6 +92,8 @@ Before first publish, complete this checklist in PyPI:
 3. Add trusted publisher values that exactly match this repository:
   `systemizing-solutions` / `dbt_data_engineering_toolkit` / `release.yml` / `pypi`.
 4. Save the publisher and then run the tagged release workflow.
+
+For automated release, the first successful trusted-publisher run can create the project.
 
 If you skip this, the `pypa/gh-action-pypi-publish` step is expected to fail with an identity or
 publisher mismatch error even when the build artifacts are valid.
@@ -203,8 +208,9 @@ python -m venv /tmp/det-wheel-smoke
 If automated publishing is unavailable, publish manually with Poetry from the `python/` directory.
 
 1. Build artifacts locally using the Build steps above.
-2. Create a PyPI API token (account settings -> API tokens), scoped to
-  `dbt-data-engineering-toolkit-compiler` when possible.
+2. Create a PyPI API token (account settings -> API tokens).
+  If the project does not exist yet, use an account-scoped token for the first manual publish,
+  then switch to project-scoped tokens afterward.
 3. Configure Poetry to use the token:
 
 ```bash

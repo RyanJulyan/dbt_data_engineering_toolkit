@@ -5,199 +5,289 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>dbt Docs Hub | Data Engineering Toolkit</title>
   <meta name="description" content="Documentation hub for the dbt package in dbt_data_engineering_toolkit." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
-      --line: #dbe3ef;
-      --primary: #2b7de9;
-      --primary-dark: #0f2744;
-      --card: #f8fafc;
-      --radius: 18px;
+      --bg: #f4f1e9;
+      --ink: #1f2429;
+      --muted: #5d6570;
+      --card: #ffffff;
+      --edge: #d8d1c4;
+      --brand: #1f8f5f;
+      --brand-ink: #0f4d33;
+      --brand-soft: #dff4ea;
+      --accent: #f6b833;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --shadow: 0 18px 45px rgba(24, 35, 28, 0.12);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
-      color: var(--text);
-      background: var(--bg);
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1000px 600px at 92% -8%, rgba(31, 143, 95, 0.14), transparent 60%),
+        radial-gradient(900px 700px at -12% 20%, rgba(246, 184, 51, 0.16), transparent 55%),
+        linear-gradient(180deg, #f8f6f0 0%, var(--bg) 50%, #efeade 100%);
+      min-height: 100vh;
       line-height: 1.55;
     }
 
-    .wrap {
-      width: min(1000px, calc(100% - 2rem));
-      margin: 1rem auto 2rem;
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.25;
+      background-image:
+        linear-gradient(45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%);
+      background-size: 7px 7px;
+      z-index: 0;
     }
 
-    .top {
+    .shell {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
       display: flex;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      border: 1px solid var(--line);
+      align-items: center;
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--edge);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.97);
-      padding: 0.6rem 0.9rem;
-      position: sticky;
-      top: 12px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(4px);
     }
 
-    .top a {
+    .brand {
+      font-family: "Archivo", sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .topbar nav {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .topbar a {
+      color: var(--ink);
       text-decoration: none;
-      color: var(--text);
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
       font-weight: 600;
       font-size: 0.9rem;
-      border-radius: 999px;
-      border: 1.5px solid transparent;
-      padding: 0.34rem 0.68rem;
     }
 
-    .top a:hover {
-      color: var(--primary);
-      border-color: rgba(43, 125, 233, 0.35);
-      background: rgba(43, 125, 233, 0.08);
+    .topbar a:hover {
+      background: var(--brand-soft);
+      color: var(--brand-ink);
     }
 
     .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem;
       margin-top: 1rem;
-      border-radius: 26px;
-      border: 1px solid #194b84;
-      padding: clamp(1rem, 3vw, 1.9rem);
+    }
+
+    .hero-panel {
+      border: 1px solid var(--edge);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(250, 245, 233, 0.85));
+      box-shadow: var(--shadow);
+      padding: clamp(1.2rem, 3vw, 2.5rem);
+      animation: rise 0.65s ease both;
+    }
+
+    .hero-panel.primary {
       background:
-        radial-gradient(1000px 520px at 6% 6%, rgba(91, 169, 255, 0.2), transparent 50%),
-        linear-gradient(145deg, #0f2744 10%, #123a66 56%, #1b518c 100%);
-      color: #fff;
-      box-shadow: 0 24px 48px rgba(15, 39, 68, 0.24);
+        radial-gradient(1000px 520px at 10% 10%, rgba(31, 143, 95, 0.16), transparent 50%),
+        linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(243, 251, 247, 0.94));
     }
 
     .eyebrow {
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 700;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.1);
       display: inline-block;
+      font-family: "Archivo", sans-serif;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      border: 1px solid #b9cfbe;
       padding: 0.3rem 0.56rem;
+      color: var(--brand-ink);
+      background: var(--brand-soft);
+      font-weight: 700;
     }
 
-    h1, h2 {
-      margin: 0.6rem 0;
+    h1 {
+      font-family: "Archivo", sans-serif;
+      margin: 0.75rem 0;
+      font-size: clamp(1.9rem, 5vw, 3.3rem);
+      line-height: 1.03;
       letter-spacing: -0.01em;
-      line-height: 1.1;
     }
 
-    h1 { font-size: clamp(1.7rem, 4.5vw, 2.65rem); }
-    h2 { font-size: clamp(1.2rem, 2.2vw, 1.5rem); color: var(--primary-dark); }
+    h2 {
+      margin: 0.35rem 0 0.45rem;
+      font-family: "Archivo", sans-serif;
+      font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+      color: var(--brand-ink);
+      letter-spacing: -0.01em;
+    }
 
-    p { margin: 0; color: rgba(255, 255, 255, 0.85); }
+    .hero-panel p,
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
 
     .pill-row {
       margin-top: 0.8rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.38rem;
+      gap: 0.4rem;
     }
 
     .pill {
-      border: 1.5px solid rgba(148, 197, 255, 0.45);
+      border: 1.5px solid #a5c8b4;
       border-radius: 999px;
-      color: #dcebff;
-      background: rgba(255, 255, 255, 0.06);
-      font-size: 0.79rem;
-      padding: 0.29rem 0.52rem;
+      color: var(--brand-ink);
+      background: #f3fbf7;
+      font-size: 0.78rem;
+      padding: 0.3rem 0.55rem;
       font-weight: 700;
     }
 
     .grid {
       margin-top: 1rem;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
     }
 
     .card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border: 1px solid var(--edge);
+      border-radius: var(--radius-md);
       background: #fff;
-      box-shadow: 0 10px 28px rgba(15, 39, 68, 0.06);
-      padding: 1rem;
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
+      box-shadow: 0 10px 30px rgba(36, 43, 30, 0.08);
+      padding: 1.1rem;
     }
 
     ul {
-      margin: 0.7rem 0 0;
-      padding-left: 1rem;
-      color: var(--muted);
+      list-style: none;
+      margin: 0.9rem 0 0;
+      padding: 0;
+      display: grid;
+      gap: 0.45rem;
     }
 
-    li { margin: 0.42rem 0; }
+    li { margin: 0; }
 
     a {
-      color: var(--primary);
+      color: var(--brand-ink);
       text-decoration: none;
-      border-bottom: 1px solid rgba(43, 125, 233, 0.25);
       font-weight: 600;
+      border-bottom: 1px dashed #a4cdb8;
+      width: fit-content;
     }
 
-    a:hover { border-bottom-color: var(--primary); }
+    a:hover {
+      color: var(--brand);
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     @media (max-width: 860px) {
+      .hero,
       .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <nav class="top" aria-label="Hub Navigation">
-      <a href="../index.html">Home</a>
-      <a href="./hub.html">dbt Hub</a>
-      <a href="../python/index.html">Python Hub</a>
-      <a href="../readme.html?file=../quickstart.md&title=Quickstart">Quickstart</a>
-      <a href="./index.html">Generated dbt docs</a>
+  <div class="grain"></div>
+  <main class="shell">
+    <nav class="topbar" aria-label="Hub Navigation">
+      <div class="brand">Data Engineering Toolkit</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="./hub.html">dbt Hub</a>
+        <a href="../python/index.html">Python Hub</a>
+        <a href="../readme.html?file=./quickstart.md&title=Quickstart">Quickstart</a>
+        <a href="./index.html" target="_blank" rel="noopener noreferrer">Generated dbt docs</a>
+      </nav>
     </nav>
 
     <section class="hero">
-      <span class="eyebrow">dbt Documentation Hub</span>
-      <h1>Reusable Macros For Readable, Testable Data Engineering SQL</h1>
-      <p>
-        A shared SQL expression vocabulary for cleaning, mapping, validation, and transformation,
-        designed to keep model intent explicit and reviewable.
-      </p>
-      <div class="pill-row" aria-label="dbt macro areas">
-        <span class="pill">clean</span>
-        <span class="pill">format</span>
-        <span class="pill">validate</span>
-        <span class="pill">assert</span>
-        <span class="pill">transform</span>
-        <span class="pill">govern</span>
-      </div>
+      <article class="hero-panel primary">
+        <span class="eyebrow">dbt Documentation Hub</span>
+        <h1>Reusable Macros For Readable, Testable Data Engineering SQL</h1>
+        <p>
+          A shared SQL expression vocabulary for cleaning, mapping, validation, and transformation,
+          designed to keep model intent explicit and reviewable.
+        </p>
+        <div class="pill-row" aria-label="dbt macro areas">
+          <span class="pill">clean</span>
+          <span class="pill">format</span>
+          <span class="pill">validate</span>
+          <span class="pill">assert</span>
+          <span class="pill">transform</span>
+          <span class="pill">govern</span>
+        </div>
+      </article>
+
+      <article class="hero-panel">
+        <span class="eyebrow">Generated Site</span>
+        <h2>What this hub connects</h2>
+        <p>
+          The package guide pages, the repository README, and the generated dbt artifacts all live
+          behind the same navigation layer.
+        </p>
+        <div class="pill-row" aria-label="dbt hub summary">
+          <span class="pill">site index</span>
+          <span class="pill">manifest</span>
+          <span class="pill">catalog</span>
+          <span class="pill">results</span>
+        </div>
+      </article>
     </section>
 
     <section class="grid" aria-label="dbt docs links">
       <article class="card">
-        <span class="eyebrow" style="color:#2b7de9;border-color:rgba(43,125,233,.35);background:rgba(43,125,233,.08)">Primary Docs</span>
+        <span class="eyebrow">Primary Docs</span>
         <h2>Package Guides</h2>
         <ul>
-          <li><a href="../readme.html?file=../sql_walkthrough.md&title=SQL%20Walkthrough">SQL walkthrough</a></li>
-          <li><a href="../readme.html?file=../testing.md&title=Testing%20Approach">Testing approach</a></li>
-          <li><a href="../readme.html?file=../compatibility.md&title=Compatibility%20Notes">Adapter and compatibility notes</a></li>
-          <li><a href="../readme.html?file=../imports.md&title=Imports%20And%20Package%20Integration">Imports and package integration</a></li>
-          <li><a href="../readme.html?file=../updating.md&title=Upgrade%20And%20Update%20Guidance">Upgrade and update guidance</a></li>
+          <li><a href="../readme.html?file=./sql_walkthrough.md&title=SQL%20Walkthrough">SQL walkthrough</a></li>
+          <li><a href="../readme.html?file=./testing.md&title=Testing%20Approach">Testing approach</a></li>
+          <li><a href="../readme.html?file=./compatibility.md&title=Compatibility%20Notes">Adapter and compatibility notes</a></li>
+          <li><a href="../readme.html?file=./imports.md&title=Imports%20And%20Package%20Integration">Imports and package integration</a></li>
+          <li><a href="../readme.html?file=./updating.md&title=Upgrade%20And%20Update%20Guidance">Upgrade and update guidance</a></li>
           <li><a href="../readme.html?file=../README.md&title=Repository%20README">Repository README (rendered)</a></li>
         </ul>
       </article>
 
       <article class="card">
-        <span class="eyebrow" style="color:#2b7de9;border-color:rgba(43,125,233,.35);background:rgba(43,125,233,.08)">Generated Site</span>
+        <span class="eyebrow">Generated Site</span>
         <h2>dbt Artifacts</h2>
         <ul>
           <li><a href="./index.html">dbt docs site index</a></li>

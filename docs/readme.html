@@ -5,94 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>README Viewer | Data Engineering Toolkit</title>
   <meta name="description" content="Rendered Markdown viewer for repository documentation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown.min.css" />
   <style>
     :root {
-      --bg: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
-      --line: #dbe3ef;
-      --primary: #2b7de9;
-      --primary-dark: #0f2744;
-      --radius: 16px;
+      --bg: #f4f1e9;
+      --ink: #1f2429;
+      --muted: #5d6570;
+      --card: #ffffff;
+      --edge: #d8d1c4;
+      --brand: #1f8f5f;
+      --brand-ink: #0f4d33;
+      --brand-soft: #dff4ea;
+      --accent: #f6b833;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --shadow: 0 18px 45px rgba(24, 35, 28, 0.12);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
-      color: var(--text);
-      background: var(--bg);
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1000px 600px at 92% -8%, rgba(31, 143, 95, 0.14), transparent 60%),
+        radial-gradient(900px 700px at -12% 20%, rgba(246, 184, 51, 0.16), transparent 55%),
+        linear-gradient(180deg, #f8f6f0 0%, var(--bg) 50%, #efeade 100%);
+      min-height: 100vh;
       line-height: 1.55;
     }
 
-    .wrap {
-      width: min(1080px, calc(100% - 2rem));
-      margin: 1rem auto 2rem;
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.25;
+      background-image:
+        linear-gradient(45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%);
+      background-size: 7px 7px;
+      z-index: 0;
     }
 
-    .top {
+    .shell {
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
       display: flex;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      border: 1px solid var(--line);
+      align-items: center;
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--edge);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.97);
-      padding: 0.6rem 0.9rem;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(4px);
       position: sticky;
       top: 12px;
       z-index: 10;
     }
 
-    .top a {
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-radius: 999px;
-      border: 1.5px solid transparent;
-      padding: 0.34rem 0.68rem;
+    .brand {
+      font-family: "Archivo", sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
-    .top a:hover {
-      color: var(--primary);
-      border-color: rgba(43, 125, 233, 0.35);
-      background: rgba(43, 125, 233, 0.08);
+    .topbar nav {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .topbar a {
+      color: var(--ink);
+      text-decoration: none;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .topbar a:hover {
+      background: var(--brand-soft);
+      color: var(--brand-ink);
     }
 
     .header {
       margin-top: 1rem;
-      border-radius: 22px;
-      border: 1px solid #194b84;
-      padding: 1rem 1.1rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--edge);
+      padding: 1.2rem 1.25rem;
       background:
-        radial-gradient(1000px 520px at 10% 10%, rgba(91, 169, 255, 0.2), transparent 50%),
-        linear-gradient(145deg, #0f2744 10%, #123a66 56%, #1b518c 100%);
-      color: #fff;
-      box-shadow: 0 22px 44px rgba(15, 39, 68, 0.22);
+        radial-gradient(1000px 520px at 10% 10%, rgba(31, 143, 95, 0.16), transparent 50%),
+        linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(243, 251, 247, 0.94));
+      box-shadow: var(--shadow);
     }
 
     .header h1 {
+      font-family: "Archivo", sans-serif;
       margin: 0;
-      font-size: clamp(1.35rem, 3vw, 1.9rem);
-      line-height: 1.15;
-      letter-spacing: -0.01em;
+      font-size: clamp(1.9rem, 5vw, 3.15rem);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
     }
 
     .meta {
-      margin-top: 0.5rem;
-      color: rgba(220, 235, 255, 0.95);
-      font-size: 0.92rem;
+      margin-top: 0.55rem;
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
     .panel {
       margin-top: 1rem;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border: 1px solid var(--edge);
+      border-radius: var(--radius-lg);
       background: #fff;
-      box-shadow: 0 10px 28px rgba(15, 39, 68, 0.06);
+      box-shadow: 0 10px 30px rgba(36, 43, 30, 0.08);
       overflow: hidden;
     }
 
@@ -101,25 +144,25 @@
       gap: 0.45rem;
       flex-wrap: wrap;
       padding: 0.75rem;
-      border-bottom: 1px solid var(--line);
-      background: #f8fafc;
+      border-bottom: 1px solid var(--edge);
+      background: #f3fbf7;
     }
 
     .toolbar a {
       text-decoration: none;
-      color: var(--primary);
-      border: 1.5px solid rgba(43, 125, 233, 0.35);
+      color: var(--brand-ink);
+      border: 1.5px solid #a5c8b4;
       border-radius: 999px;
-      background: rgba(43, 125, 233, 0.08);
+      background: #fff;
       font-size: 0.82rem;
       font-weight: 700;
-      padding: 0.3rem 0.58rem;
+      padding: 0.34rem 0.62rem;
     }
 
     .markdown-body {
       padding: clamp(1rem, 2.5vw, 1.6rem);
       max-width: none;
-      color: var(--text);
+      color: var(--ink);
       background: #fff;
     }
 
@@ -139,16 +182,21 @@
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <nav class="top" aria-label="Hub Navigation">
-      <a href="./index.html">Home</a>
-      <a href="./dbt/hub.html">dbt Hub</a>
-      <a href="./python/index.html">Python Hub</a>
-      <a href="./readme.html?file=./quickstart.md&title=Quickstart">Quickstart</a>
-      <a href="./dbt/index.html">Generated dbt docs</a>
+  <div class="grain"></div>
+  <main class="shell">
+    <nav class="topbar" aria-label="Hub Navigation">
+      <div class="brand">Data Engineering Toolkit</div>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./dbt/hub.html">dbt Hub</a>
+        <a href="./python/index.html">Python Hub</a>
+        <a href="./readme.html?file=./quickstart.md&title=Quickstart">Quickstart</a>
+        <a href="./dbt/index.html" target="_blank" rel="noopener noreferrer">Generated dbt docs</a>
+      </nav>
     </nav>
 
     <section class="header">
+      <span class="eyebrow" style="display:inline-block;font-family:'Archivo',sans-serif;font-size:0.76rem;letter-spacing:0.08em;text-transform:uppercase;border:1px solid #b9cfbe;border-radius:999px;padding:0.3rem 0.58rem;color:var(--brand-ink);background:var(--brand-soft);font-weight:700;">Markdown Viewer</span>
       <h1 id="title">README Viewer</h1>
       <div class="meta" id="meta">Loading markdown...</div>
     </section>
@@ -188,9 +236,8 @@
       renderer.link = function ({ href, title, text }) {
         const safeHref = href || "";
         const resolvedHref = isExternal(safeHref) ? safeHref : new URL(safeHref, markdownUrl).toString();
-        const target = /^https?:\/\//i.test(resolvedHref) ? ' target="_blank" rel="noopener noreferrer"' : "";
         const titleAttr = title ? ` title="${title}"` : "";
-        return `<a href="${resolvedHref}"${titleAttr}${target}>${text}</a>`;
+        return `<a href="${resolvedHref}"${titleAttr}>${text}</a>`;
       };
 
       renderer.image = function ({ href, title, text }) {
