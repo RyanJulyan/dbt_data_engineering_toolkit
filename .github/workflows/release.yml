@@ -4,6 +4,9 @@ on:
   workflow_run:
     workflows: ["CI"]
     types: [completed]
+    branches:
+      - "v*"
+      - "*.*.*"
 
 permissions:
   contents: read
@@ -30,15 +33,28 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
       - id: tag
-        name: Require semver tag on tested commit
+        name: Require semver tag trigger on tested commit
         run: |
-          tag="$(git tag --points-at HEAD | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
-          echo "release_tag=${tag}" >> "$GITHUB_OUTPUT"
-          if [[ -n "${tag}" ]]; then
-            echo "release_ready=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "release_ready=false" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          candidate="${{ github.event.workflow_run.head_branch }}"
+          tested_sha="${{ github.event.workflow_run.head_sha }}"
+
+          echo "release_tag=" >> "$GITHUB_OUTPUT"
+          echo "release_ready=false" >> "$GITHUB_OUTPUT"
+
+          if [[ ! "${candidate}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Not a semver tag trigger: ${candidate}"
+            exit 0
           fi
+
+          tag_sha="$(git rev-list -n 1 "${candidate}" 2>/dev/null || true)"
+          if [[ -z "${tag_sha}" || "${tag_sha}" != "${tested_sha}" ]]; then
+            echo "Tag ${candidate} does not resolve to tested SHA ${tested_sha}."
+            exit 0
+          fi
+
+          echo "release_tag=${candidate}" >> "$GITHUB_OUTPUT"
+          echo "release_ready=true" >> "$GITHUB_OUTPUT"
 
   build-python:
     needs: detect-tag
@@ -129,7 +145,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: needs.detect-tag.outputs.release_ready == 'true'
     steps:
       - uses: actions/checkout@v5
         with:
