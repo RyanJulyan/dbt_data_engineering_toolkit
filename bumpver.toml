@@ -13,14 +13,9 @@ push = true
 [bumpver.file_patterns]
 "python/pyproject.toml" = [
   '^version = "{version}"',
-  '^current_version = "{version}"',
 ]
 "python/src/dbt_data_engineering_toolkit_compiler/version.py" = [
   '^COMPILER_VERSION = "{version}"',
-  '^WORKBOOK_SCHEMA_VERSION = "{version}"',
-  '^DEFAULT_TOOLKIT_REVISION = "v{version}"',
-  '^DET_SPEC_VERSION = "det/v{version}"',
-  '^OPERATOR_REGISTRY_VERSION = "{version}"',
 ]
 "dbt/dbt_project.yml" = [
   '^version: {version}$',

@@ -89,34 +89,3 @@ include = ["src"]
 pythonVersion = "3.11"
 typeCheckingMode = "basic"
 reportMissingTypeStubs = false
-
-[tool.bumpver]
-current_version = "4.0.1"
-version_pattern = "MAJOR.MINOR.PATCH"
-commit_message = "bump version {old_version} -> {new_version}"
-tag_message = "v{new_version}"
-tag_scope = "default"
-pre_commit_hook = "../scripts/update_release_fixtures.py"
-post_commit_hook = ""
-commit = true
-tag = true
-push = true
-
-[tool.bumpver.file_patterns]
-"pyproject.toml" = [
-  '^version = "{version}"',
-  '^current_version = "{version}"',
-]
-"src/dbt_data_engineering_toolkit_compiler/version.py" = [
-  '^COMPILER_VERSION = "{version}"',
-  '^WORKBOOK_SCHEMA_VERSION = "{version}"',
-  '^DEFAULT_TOOLKIT_REVISION = "v{version}"',
-  '^DET_SPEC_VERSION = "det/v{version}"',
-  '^OPERATOR_REGISTRY_VERSION = "{version}"',
-]
-"../dbt/dbt_project.yml" = [
-  '^version: {version}$',
-]
-"../aliases/de_toolkit/dbt_project.yml" = [
-  '^version: {version}$',
-]
