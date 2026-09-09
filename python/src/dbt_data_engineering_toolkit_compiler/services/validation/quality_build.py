@@ -7,7 +7,7 @@ import re
 from ...adapters import AdapterRegistry
 from ...errors import DiagnosticCategory
 from ...models import ContractQualityRule
-from ...version import DEFAULT_TOOLKIT_REVISION
+from ...version import COMPILER_VERSION, DEFAULT_TOOLKIT_REVISION
 from .context import ValidationContext
 
 QUALITY_METRICS = {
@@ -187,7 +187,7 @@ class QualityAndBuildValidator:
                 DiagnosticCategory.BUILD,
                 "DET Build",
                 None,
-                "Contract Test Authority must be 'datacontract' in V2.3.0",
+                f"Contract Test Authority must be 'datacontract' in V{COMPILER_VERSION}",
                 "ODCS and Data Contract CLI own schema-derived tests; DET owns transformations and runtime routing.",
             )
         if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", build.toolkit_git_env):

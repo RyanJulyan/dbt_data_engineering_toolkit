@@ -177,7 +177,7 @@ def _set_instructions(workbook) -> None:
     sheet["B18"] = "Convert to YAML using Data Contract CLI"
     sheet["B19"] = "datacontract import excel --source odcs.xlsx --output datacontract.yaml"
     rows = (
-        ("dbt_data_engineering_toolkit v2.3.0 workflow", None, None, None),
+        (f"dbt_data_engineering_toolkit v{COMPILER_VERSION} workflow", None, None, None),
         ("Step", "Business action", "Outcome", "Command"),
         (
             "1",
@@ -660,7 +660,7 @@ def refresh_workbook(path: Path) -> None:
     if "_DET Metadata" not in workbook.sheetnames:
         workbook.close()
         raise ValueError(
-            "Workbook is not a dbt_data_engineering_toolkit v2.3.0 workbook. "
+            f"Workbook is not a dbt_data_engineering_toolkit v{COMPILER_VERSION} workbook. "
             "Create a new workbook and import the external structure."
         )
     template_version = str(workbook["_DET Metadata"]["B4"].value or "").strip()

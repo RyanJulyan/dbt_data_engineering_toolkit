@@ -1,7 +1,7 @@
 packages:
   - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
-    revision: v2.3.0
+    revision: v4.0.1
     subdirectory: dbt
   - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
-    revision: v2.3.0
+    revision: v4.0.1
     subdirectory: aliases/de_toolkit

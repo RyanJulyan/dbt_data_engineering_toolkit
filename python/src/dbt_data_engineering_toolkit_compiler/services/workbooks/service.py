@@ -7,6 +7,7 @@ from pathlib import Path
 from ...brokers.workbooks import OpenpyxlWorkbookBroker, WorkbookBroker
 from ...errors import Diagnostic, InvalidWorkbookError, SpecificationValidationError
 from ...models import DataProductSpecification
+from ...version import COMPILER_VERSION
 from .common import (
     REQUIRED_SHEETS,
     WorkbookParseContext,
@@ -50,7 +51,7 @@ class WorkbookInterpretationService:
                         "Workbook",
                         None,
                         f"missing required sheet {name!r}",
-                        "Start from the v2.3.0 ODCS-superset template; do not rename its tabs.",
+                        f"Start from the v{COMPILER_VERSION} ODCS-superset template; do not rename its tabs.",
                         code="DET-WBK-002",
                     )
                     for name in missing

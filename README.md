@@ -53,6 +53,39 @@ No model-level configuration dictionary that has to be decoded before someone ca
 
 Generated models remain readable, reviewable and testable dbt projects.
 
+## Table of contents
+
+- [What is in this repository?](#what-is-in-this-repository)
+- [Reusable dbt package](#-reusable-dbt-package)
+- [Data-product compiler and CLI](#-data-product-compiler-and-cli)
+- [The collaboration model](#the-collaboration-model)
+- [Contract what vs implementation how](#contract-what-vs-implementation-how)
+- [Release quality and compatibility](#release-quality-and-compatibility)
+- [Maintainability architecture](#maintainability-architecture)
+- [Safe, transactional generation](#safe-transactional-generation)
+- [Complete workbook-to-dbt walkthrough](#complete-workbook-to-dbt-walkthrough)
+  - [Step 1 - Install the compiler](#step-1--install-the-compiler)
+  - [Step 2 - Create the controlled workbook](#step-2--create-the-controlled-workbook)
+  - [Step 2A - Start from an existing structure](#step-2a--start-from-an-existing-structure)
+  - [Step 3 - Define the product and output schema](#step-3--define-the-product-and-output-schema)
+  - [Step 4 - Register or import source schemas](#step-4--register-or-import-source-schemas)
+  - [Step 4A - Refresh workbook contextual choices](#step-4a--refresh-workbook-contextual-choices)
+  - [Step 5 - Define models and ordered inputs](#step-5--define-models-and-ordered-inputs)
+  - [Step 6 - Build source-to-target mappings](#step-6--build-source-to-target-mappings)
+  - [Step 7 - Define quality and operational behaviour](#step-7--define-quality-and-operational-behaviour)
+  - [Step 8 - Validate before generating](#step-8--validate-before-generating)
+  - [Step 9 - Preview generation before publishing](#step-9--preview-generation-before-publishing)
+  - [Step 10 - Inspect the generated data product](#step-10--inspect-the-generated-data-product)
+  - [Step 11 - Install dependencies and run fast checks](#step-11--install-dependencies-and-run-fast-checks)
+  - [Step 12 - Prove the generated dbt flow](#step-12--prove-the-generated-dbt-flow)
+  - [Step 13 - Adopt generated code safely](#step-13--adopt-generated-code-safely)
+- [Two supported dbt macro namespaces](#two-supported-dbt-macro-namespaces)
+- [Documentation](#documentation)
+- [Publishing and consuming V4.0.1](#publishing-and-consuming-v401)
+- [Development gates](#development-gates)
+- [Design principles](#design-principles)
+- [The broader goal](#the-broader-goal)
+
 ---
 
 # What is in this repository?

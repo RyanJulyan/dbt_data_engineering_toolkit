@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ...adapters import AdapterRegistry
 from ...models import DataProductSpecification
+from ...version import COMPILER_VERSION
 
 
 class GeneratedReadmeEmitter:
@@ -13,13 +14,13 @@ class GeneratedReadmeEmitter:
         provider = AdapterRegistry.default().get(spec.build.adapter)
         adapter_dependency = provider.dbt_dependency if provider else spec.build.adapter
         compiler_requirement = (
-            f"dbt-data-engineering-toolkit-compiler[{provider.name}]==2.3.0"
+            f"dbt-data-engineering-toolkit-compiler[{provider.name}]=={COMPILER_VERSION}"
             if provider
-            else "dbt-data-engineering-toolkit-compiler==2.3.0"
+            else f"dbt-data-engineering-toolkit-compiler=={COMPILER_VERSION}"
         )
         return f"""# {spec.metadata.name}
 
-Generated from the controlled V2.3.0 ODCS-superset workbook. The SQL is intentionally
+Generated from the controlled V{COMPILER_VERSION} ODCS-superset workbook. The SQL is intentionally
 ordinary and reviewable: source/ref CTEs, inline `de_toolkit` calls, validation
 flags, and explicit quarantine models.
 

@@ -6,6 +6,7 @@ import re
 
 from ...errors import DiagnosticCategory
 from ...models import Materialization, SchemaImplementation
+from ...version import COMPILER_VERSION
 from .common import duplicates, validate_identifier
 from .context import ValidationContext
 
@@ -20,7 +21,7 @@ class ModelAndSchemaValidator:
                     DiagnosticCategory.MODEL,
                     "DET Models",
                     None,
-                    f"{model.name}: incremental materialization is intentionally unavailable in V2.3.0",
+                    f"{model.name}: incremental materialization is intentionally unavailable in V{COMPILER_VERSION}",
                     "Use view, table, or ephemeral until watermark and merge semantics are configured explicitly.",
                 )
             if model.enabled and not model.inputs:

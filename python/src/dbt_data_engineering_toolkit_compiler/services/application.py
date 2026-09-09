@@ -35,7 +35,7 @@ from ..models import DataProductSpecification
 from ..operational import ApplicationResult, Artifact, CommandResult
 from ..prove import ProjectProofService
 from ..registry import OperatorRegistry
-from ..version import DEFAULT_TOOLKIT_REVISION
+from ..version import COMPILER_VERSION, DEFAULT_TOOLKIT_REVISION
 from .emissions.service import EmissionService
 from .generation import ProjectGenerationService
 from .imports.structures import StructureFormat, StructureImportService
@@ -121,7 +121,7 @@ class ToolkitApplication:
     def refresh_workbook(self, workbook: Path) -> ApplicationResult:
         self.templates.refresh(workbook)
         return ApplicationResult.success(
-            f"Refreshed contextual dropdowns and v2.3.0 metadata in {workbook}"
+            f"Refreshed contextual dropdowns and v{COMPILER_VERSION} metadata in {workbook}"
         )
 
     def import_workbook(
@@ -461,6 +461,6 @@ class ToolkitApplication:
         if not self.files.exists(config):
             raise MissingDependencyError(
                 "sqlfluff-configuration",
-                f"Missing {config}; regenerate this V2.3.0 project.",
+                f"Missing {config}; regenerate this V{COMPILER_VERSION} project.",
             )
         return self.sqlfluff.lint(project)

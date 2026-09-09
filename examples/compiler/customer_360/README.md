@@ -1,6 +1,6 @@
 # Customer 360
 
-Generated from the controlled V2.3.0 ODCS-superset workbook. The SQL is intentionally
+Generated from the controlled V4.0.1 ODCS-superset workbook. The SQL is intentionally
 ordinary and reviewable: source/ref CTEs, inline `de_toolkit` calls, validation
 flags, and explicit quarantine models.
 
@@ -11,7 +11,7 @@ already includes Data Contract CLI, dbt Core, DuckDB, and SQLFluff. This project
 selects `duckdb` (`dbt-duckdb>=1.10,<2`).
 
 ```bash
-python -m pip install "dbt-data-engineering-toolkit-compiler[duckdb]==2.3.0"
+python -m pip install "dbt-data-engineering-toolkit-compiler[duckdb]==4.0.1"
 ```
 
 1. Point the generated two-package dependency graph at the published toolkit

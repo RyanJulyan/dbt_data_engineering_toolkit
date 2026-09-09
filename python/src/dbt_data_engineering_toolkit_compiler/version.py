@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
-COMPILER_VERSION = "4.0.1"
-WORKBOOK_SCHEMA_VERSION = "4.0.1"
+from importlib.metadata import PackageNotFoundError, version
+
+
+def _resolve_compiler_version() -> str:
+    """Resolve the installed distribution version with a source fallback."""
+
+    try:
+        return version("dbt-data-engineering-toolkit-compiler")
+    except PackageNotFoundError:
+        # Source checkouts can be imported without an installed distribution.
+        return "4.0.1"
+
+COMPILER_VERSION = _resolve_compiler_version()
+WORKBOOK_SCHEMA_VERSION = COMPILER_VERSION
 DEFAULT_DATA_PRODUCT_VERSION = "1.0.0"
-DEFAULT_TOOLKIT_REVISION = "v4.0.1"
-DET_SPEC_VERSION = "det/v4.0.1"
+DEFAULT_TOOLKIT_REVISION = f"v{COMPILER_VERSION}"
+DET_SPEC_VERSION = f"det/v{COMPILER_VERSION}"
 ODCS_VERSION = "3.1.0"
-OPERATOR_REGISTRY_VERSION = "4.0.1"
+OPERATOR_REGISTRY_VERSION = COMPILER_VERSION
 
 
 def generated_header(comment: str) -> str:

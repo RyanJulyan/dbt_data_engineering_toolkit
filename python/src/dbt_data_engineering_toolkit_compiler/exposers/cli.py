@@ -14,7 +14,7 @@ from ..errors import (
 )
 from ..operational import ApplicationResult
 from ..services.application import ImportFormat, ToolkitApplication, safe_identifier
-from ..version import DEFAULT_DATA_PRODUCT_VERSION, DEFAULT_TOOLKIT_REVISION
+from ..version import COMPILER_VERSION, DEFAULT_DATA_PRODUCT_VERSION, DEFAULT_TOOLKIT_REVISION
 
 
 def _present(result: ApplicationResult) -> int:
@@ -214,7 +214,8 @@ def build_parser() -> argparse.ArgumentParser:
     workbook = commands.add_parser("workbook", help="Controlled workbook commands")
     workbook_commands = workbook.add_subparsers(dest="workbook_command", required=True)
     workbook_build = workbook_commands.add_parser(
-        "build", help="Answer a short questionnaire and build a safe v2.3.0 workbook"
+        "build",
+        help=f"Answer a short questionnaire and build a safe v{COMPILER_VERSION} workbook",
     )
     _add_workbook_build_arguments(workbook_build)
     workbook_build.set_defaults(handler=_init)

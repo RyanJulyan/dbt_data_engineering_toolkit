@@ -5,13 +5,21 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sys
 from pathlib import Path
 
 import tomllib
 import yaml
 
-from .archive import validate_release_paths
-from .paths import ALIAS_ROOT, COMPILER_VERSION, DBT_ROOT, ROOT
+try:
+    from .archive import validate_release_paths
+    from .paths import ALIAS_ROOT, COMPILER_VERSION, DBT_ROOT, ROOT
+except ImportError:
+    scripts_root = Path(__file__).resolve().parents[1]
+    if str(scripts_root) not in sys.path:
+        sys.path.insert(0, str(scripts_root))
+    from checks.archive import validate_release_paths
+    from checks.paths import ALIAS_ROOT, COMPILER_VERSION, DBT_ROOT, ROOT
 
 REQUIRED_DEPENDENCIES = {
     "dbt-labs/dbt_utils",
