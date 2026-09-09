@@ -7,7 +7,7 @@
     ".sqlfluff": "15373ee077d89a9e21211bdd73778489365669b45d8412d66c6413a73d575364",
     ".sqlfluffignore": "16e2c1abd5df04cec716b37bebb05e98534be622889a99c18cfb72a53dbea262",
     "Makefile": "14022f027e99b547fd21e14a4c5c0fc9fb0dced3c85456d2682403cc636756a8",
-    "README.md": "33436cda9993d94782fa967fa9038997f26cb486f8396896ea18570739f3763e",
+    "README.md": "56d4b977fcccd4327ceb970e38d5675ecd12d7bd8dda6e3a4ace11dedd21b551",
     "contracts/customer_accounts.det.yaml": "08bd27b9449fe36982fb3ae60b941a666e1356423ff5fa043f18771152e5839b",
     "contracts/customer_accounts.odcs.yaml": "1ad21040eacfc83fcd83fbf16843cb1960769d4aaa13a40be842cc27fd94c327",
     "dbt_project.yml": "7e7c1192ada2aa063f12374c233054352f5f97a6f5f7b543b18dbfc42438f956",
