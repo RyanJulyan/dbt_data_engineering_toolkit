@@ -8,14 +8,14 @@ flags, and explicit quarantine models.
 
 0. Install the compiler and the selected dbt adapter. The default compiler install
 already includes Data Contract CLI, dbt Core, DuckDB, and SQLFluff. This project
-selects `duckdb` (`dbt-duckdb>=1.10,<1.12`).
+selects `duckdb` (`dbt-duckdb>=1.10,<2`).
 
 ```bash
 python -m pip install "dbt-data-engineering-toolkit-compiler[duckdb]==2.3.0"
 ```
 
 1. Point the generated two-package dependency graph at the published toolkit
-repository. Both entries are pinned to `v4.0.0`; the second entry installs
+repository. Both entries are pinned to `v4.0.1`; the second entry installs
 the short `de_toolkit` namespace from its subdirectory.
 
 ```bash
