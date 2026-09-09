@@ -81,7 +81,7 @@ Generated models remain readable, reviewable and testable dbt projects.
   - [Step 13 - Adopt generated code safely](#step-13--adopt-generated-code-safely)
 - [Two supported dbt macro namespaces](#two-supported-dbt-macro-namespaces)
 - [Documentation](#documentation)
-- [Publishing and consuming V4.0.1](#publishing-and-consuming-v401)
+- [Publishing and consuming V4.0.2](#publishing-and-consuming-v401)
 - [Development gates](#development-gates)
 - [Design principles](#design-principles)
 - [The broader goal](#the-broader-goal)
@@ -291,9 +291,9 @@ The workbook therefore separates official ODCS surfaces from DET implementation 
 
 # Release quality and compatibility
 
-V4.0.1 has explicit release gates for both the Python compiler and dbt package.
+V4.0.2 has explicit release gates for both the Python compiler and dbt package.
 
-| Gate                                      |    V4.0.1 result |
+| Gate                                      |    V4.0.2 result |
 | ----------------------------------------- | ---------------: |
 | Python statement coverage                 |           85.01% |
 | dbt DuckDB-scoped implementation coverage | 98.53% — 134/136 |
@@ -917,7 +917,7 @@ The compiler validates issues such as:
 
 before dbt is invoked.
 
-`incremental` materialization is deliberately not advertised in V4.0.1 until watermark and merge semantics are fully declarative.
+`incremental` materialization is deliberately not advertised in V4.0.2 until watermark and merge semantics are fully declarative.
 
 ---
 
@@ -1499,7 +1499,7 @@ Data Contract, dbt and SQLFluff are all part of the default compiler dependency 
 The emitted contract targets current:
 
 ```text
-ODCS v4.0.1
+ODCS v4.0.2
 ```
 
 Relevant documentation:
@@ -1795,7 +1795,7 @@ A Jinja assignment such as:
 
 is scoped only to the model where it is declared.
 
-V4.0.1 therefore provides a real companion dbt package called:
+V4.0.2 therefore provides a real companion dbt package called:
 
 ```text
 de_toolkit
@@ -1855,11 +1855,11 @@ More focused guides are available for deeper reference.
 | Coverage definitions and commands                   | [Testing](docs/testing.md)                      |
 | GitHub release and dbt Package Hub submission       | [Deployment](docs/deployment.md)                |
 | Full dbt-only walkthrough and recipes               | [SQL walkthrough](docs/sql_walkthrough.md)      |
-| First public release details                        | [V4.0.1 release notes](V4.0.1_RELEASE_NOTES.md) |
+| First public release details                        | [V4.0.2 release notes](V4.0.2_RELEASE_NOTES.md) |
 
 ---
 
-# Publishing and consuming V4.0.1
+# Publishing and consuming V4.0.2
 
 Before the canonical package is accepted into dbt Package Hub, pin the Git release.
 
@@ -1868,7 +1868,7 @@ For only the canonical namespace:
 ```yaml
 packages:
   - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
-    revision: v4.0.1
+    revision: v4.0.2
     subdirectory: dbt
 ```
 
@@ -1877,10 +1877,10 @@ To also install the short `de_toolkit` namespace:
 ```yaml
 packages:
   - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
-    revision: v4.0.1
+    revision: v4.0.2
 
   - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
-    revision: v4.0.1
+    revision: v4.0.2
     subdirectory: aliases/de_toolkit
 ```
 
@@ -1940,7 +1940,7 @@ make dbt-coverage
 make codegen evaluator
 ```
 
-V4.0.1 supports:
+V4.0.2 supports:
 
 ```text
 dbt Core 1.10.6+

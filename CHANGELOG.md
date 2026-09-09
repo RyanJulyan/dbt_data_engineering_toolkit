@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.2 - 2026-09-07
+
+- Refreshed the release fixtures and example package metadata for the 4.0.2 release.
+
 ## 4.0.1 - 2026-09-07
 
 - Refreshed the release fixtures and example package metadata for the 4.0.1 release.
