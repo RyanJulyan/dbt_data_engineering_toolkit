@@ -8,7 +8,7 @@ flags, and explicit quarantine models.
 
 0. Install the compiler and the selected dbt adapter. The default compiler install
 already includes Data Contract CLI, dbt Core, DuckDB, and SQLFluff. This project
-selects `duckdb` (`dbt-duckdb>=1.10,<2`).
+selects `duckdb` (`dbt-duckdb>=1.10,<1.12`).
 
 ```bash
 python -m pip install "dbt-data-engineering-toolkit-compiler[duckdb]==2.3.0"
