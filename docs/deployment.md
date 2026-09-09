@@ -276,7 +276,18 @@ Never move or overwrite a published tag. Correct a release with a new semantic v
 ## 7. Smoke-test the Git dbt package
 
 In a clean consumer project, create:
+### Using environment variables
+```yaml
+packages:
+  - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
+    revision: v4.0.2
+    subdirectory: dbt
+  - git: "{{ env_var('DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL') }}"
+    revision: v4.0.2
+    subdirectory: aliases/de_toolkit
+```
 
+### Using the git repo directly 
 ```yaml
 packages:
   - git: "https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"
@@ -290,6 +301,8 @@ packages:
 Then run:
 
 ```bash
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
+
 dbt clean
 dbt deps
 dbt parse

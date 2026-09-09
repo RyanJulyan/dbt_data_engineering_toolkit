@@ -131,6 +131,8 @@ Quarantine models use `accepted_rows(ref(...))` and `rejected_rows(ref(...))`.
 ## 5. Run the full tooling
 
 ```bash
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
+
 dbt deps --profiles-dir .
 sqlfluff lint . --config .sqlfluff
 dbt build --profiles-dir . --exclude package:dbt_project_evaluator
@@ -142,6 +144,8 @@ dbt run-operation generate_model_yaml \
 dbt seed --profiles-dir . --select package:dbt_project_evaluator
 dbt run --profiles-dir . --select package:dbt_project_evaluator
 ```
+
+or replace the `env_var(...)` with `"https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"` in the `packages.yml`.
 
 `dbt_utils`, `dbt_assertions`, `codegen`, and `dbt_project_evaluator` are implementation
 dependencies. Consumer models call the toolkit facade, so the underlying package can be replaced

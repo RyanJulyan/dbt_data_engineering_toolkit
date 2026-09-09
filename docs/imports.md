@@ -85,6 +85,15 @@ ODCS owns what the product promises. DET-only implementation remains separate:
 
 From the upstream dbt project (where `dbt_project.yml` lives):
 
+If that project's `packages.yml` uses `env_var(...)`, export its required variables first. For
+toolkit-backed packages, this is typically:
+
+```bash
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
+```
+
+or replace the `env_var(...)` with `"https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"`
+
 ```bash
 dbt deps --profiles-dir /absolute/path/to/profiles
 dbt parse --profiles-dir /absolute/path/to/profiles

@@ -165,7 +165,8 @@ def _set_build_sheet(workbook, scaffold: WorkbookScaffold | None = None) -> None
             sheet.cell(row_number, column, value)
     sheet["A2"] = (
         "Advanced project settings. Generated packages use the published Git package and a "
-        "pinned revision; local paths are never emitted."
+        "pinned revision; local paths are never emitted. Export the Toolkit Git Env variable "
+        "before dbt deps so packages load correctly."
     )
 
 
@@ -223,9 +224,9 @@ def _set_instructions(workbook) -> None:
         ),
         (
             "8",
-            "Generate, sync, and lint",
-            "Post-sync ODCS + dbt + SQLFluff",
-            "det generate ...; dbt deps; det check ...",
+            "Export package env var, then generate, sync, and lint",
+            "dbt package refs resolve from your published toolkit Git URL",
+            "export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git; det generate ...; dbt deps; det check ...",
         ),
         (
             "9",

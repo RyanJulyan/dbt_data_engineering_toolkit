@@ -1630,6 +1630,8 @@ Run:
 ```bash
 cd examples/compiler/customer_accounts
 
+export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git
+
 dbt deps
 
 dbt seed \
@@ -1648,6 +1650,8 @@ dbt run \
   --profiles-dir . \
   --select package:dbt_project_evaluator
 ```
+
+or replace the `env_var(...)` with `"https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git"` in the `packages.yml`.
 
 Expected proof includes:
 
