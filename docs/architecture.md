@@ -1,4 +1,4 @@
-# V4.0.3 compiler architecture
+# V4.1.0 compiler architecture
 
 The compiler is divided by responsibility so maintainers can extend one concern without
 coupling workbook I/O, validation, generation, or command execution.
