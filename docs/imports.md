@@ -58,7 +58,7 @@ Safe defaults:
 
 | Decision | Default | Explicit opt-in |
 | --- | --- | --- |
-| Customer demonstration rows | excluded | `--sample-customer-data` |
+| Multi-source demonstration rows | excluded | `--sample-customer-data` |
 | Direct-copy mappings | not inferred | `--identity-mappings` |
 | Imported model execution | disabled | identity mappings or manual enable |
 | Removed target fields | retained | `--replace-schema` |

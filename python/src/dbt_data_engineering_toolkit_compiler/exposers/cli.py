@@ -46,10 +46,10 @@ def _workbook_answers(args: argparse.Namespace, destination: Path) -> tuple[Work
     include_sample = bool(args.sample_customer_data)
     if args.sample_customer_data is None and interactive:
         include_sample = _prompt_yes_no(
-            "Include the Customer 360 demonstration data?", default=False
+            "Include the multi-source customer demonstration data?", default=False
         )
     if include_sample:
-        return WorkbookScaffold(product_id="customer_360", name="Customer 360"), True
+        return WorkbookScaffold(product_id="customer_accounts", name="Customer Accounts"), True
     default_id = safe_identifier(destination.stem)
     product_id = args.product_id or (
         safe_identifier(_prompt("Product ID", default_id)) if interactive else default_id

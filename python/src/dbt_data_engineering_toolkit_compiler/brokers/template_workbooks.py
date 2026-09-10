@@ -938,7 +938,11 @@ def build_workbook(
 
     if destination.exists() and not force:
         raise FileExistsError(destination)
-    resource = "data_product_sample.xlsx" if include_customer_sample else "data_product.xlsx"
+    resource = (
+        "data_product_multi_source_sample.xlsx"
+        if include_customer_sample
+        else "data_product.xlsx"
+    )
     template = files("dbt_data_engineering_toolkit_compiler") / "resources" / resource
     destination.parent.mkdir(parents=True, exist_ok=True)
     with as_file(template) as source:

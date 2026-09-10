@@ -206,7 +206,7 @@ def test_interactive_sample_requires_positive_opt_in(monkeypatch: pytest.MonkeyP
     scaffold, include_sample = cli._workbook_answers(args, Path("anything.xlsx"))
 
     assert include_sample is True
-    assert scaffold.product_id == "customer_360"
+    assert scaffold.product_id == "customer_accounts"
 
 
 @pytest.mark.parametrize(

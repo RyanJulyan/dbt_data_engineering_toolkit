@@ -158,7 +158,7 @@ class WorkbookCompilerTests(unittest.TestCase):
             build_workbook(path, include_customer_sample=True)
             copied = load_specification(path)
             validate_specification(copied)
-            self.assertEqual(copied.metadata.product_id, "customer_360")
+            self.assertEqual(copied.metadata.product_id, "customer_accounts")
 
     def test_emits_inline_sql_and_both_contracts(self) -> None:
         artifacts = {item.path.as_posix(): item.content for item in emit_all(self.spec)}

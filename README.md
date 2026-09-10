@@ -1194,10 +1194,10 @@ A safe blank workbook may produce:
 Valid: Orders Data Product (0 models, 0 mapped columns, 0 rules)
 ```
 
-The explicit Customer 360 demonstration workbook may produce:
+The explicit multi-source demonstration workbook may produce:
 
 ```text
-Valid: Customer 360 (1 models, 6 mapped columns, 3 rules)
+Valid: Customer Accounts (2 models, 12 mapped columns, 2 rules)
 ```
 
 Validation covers areas including:

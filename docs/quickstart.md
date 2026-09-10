@@ -22,7 +22,7 @@ det workbook build contracts/orders.xlsx --no-input \
   --domain sales
 ```
 
-No customer rows, sources, mappings, rules, or lookups are added. Demo content requires the
+No demonstration rows, sources, mappings, rules, or lookups are added. Demo content requires the
 explicit `--sample-customer-data` flag.
 
 ## 3. Import an existing schema, if available

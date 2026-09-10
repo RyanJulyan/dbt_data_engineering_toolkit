@@ -52,7 +52,7 @@ delivery.
 | 8 | Export package environment variables, then generate, sync, and lint | dbt packages resolve from your published Git URL and pinned revision | `export DBT_DATA_ENGINEERING_TOOLKIT_GIT_URL=https://github.com/systemizing-solutions/dbt_data_engineering_toolkit.git; det generate ...; dbt deps; det check ...` |
 | 9 | Run isolated acceptance | Contract, dbt tests, evaluator | `det prove PRODUCT.xlsx --project-dir dbt_product` |
 | 10 | Merge later schema changes | Mappings and rules preserved | `det workbook sync ...` |
-| Demo | Opt in only when explicitly wanted | Customer 360 training rows | `det workbook build demo.xlsx --sample-customer-data` |
+| Demo | Opt in only when explicitly wanted | Multi-source customer training rows | `det workbook build demo.xlsx --sample-customer-data` |
 
 Before running `dbt deps`, set the package source URL used by generated `packages.yml`:
 
@@ -70,7 +70,7 @@ det workbook build data_product.xlsx --no-input
 det validate data_product.xlsx
 ```
 
-The default is blank and does not add Customer 360 sample data. Use
+The default is blank and does not add demonstration sample data. Use
 `--sample-customer-data` only when you explicitly want a demonstration workbook.
 
 Continue with `det --help` and `det workbook --help`. The source repository
